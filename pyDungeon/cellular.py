@@ -5,8 +5,8 @@ def cellDungeon(width=50,height=50,rand=.55,seed=random.randint(100000,100000000
 
     dungeon = numpy.ones((height,width),dtype=numpy.uint)
     
-    for x in xrange(1,width-1):
-        for y in xrange(1,height-1):
+    for x in range(1,width-1):
+        for y in range(1,height-1):
             if random.random()<rand:
                 dungeon[y,x] = 0
 
@@ -23,8 +23,8 @@ def fiveFour(dungeon):
     height,width = dungeon.shape
     nextD = numpy.zeros((height,width),dtype=numpy.uint)  
 
-    for x in xrange(0,width):
-        for y in xrange(0,height):
+    for x in range(0,width):
+        for y in range(0,height):
             if cellCount(dungeon,x,y) >= 5:
                 nextD[y,x] = 1
 
@@ -34,8 +34,8 @@ def fiveFourSpace(dungeon,n=2,c=2):
     height,width = dungeon.shape
     nextD = numpy.zeros((height,width),dtype=numpy.uint)  
 
-    for x in xrange(0,width):
-        for y in xrange(0,height):
+    for x in range(0,width):
+        for y in range(0,height):
             if cellCount(dungeon,x,y) >= 5 or cellCount(dungeon,x,y,n=2) <= c:
                 nextD[y,x] = 1
 
@@ -46,8 +46,8 @@ def cellCount(dungeon,x,y,n=1):
     height,width = dungeon.shape
     count=0
 
-    for j in xrange(x-n,x+n+1):
-        for k in xrange(y-n,y+n+1):
+    for j in range(x-n,x+n+1):
+        for k in range(y-n,y+n+1):
             if j<0 or k<0 or j>width-1 or k>height-1:
                 count+=1
             elif dungeon[k,j] == 1:
@@ -57,8 +57,8 @@ def cellCount(dungeon,x,y,n=1):
 def firstZero(dungeon):
     height,width = dungeon.shape
 
-    for x in xrange(0,width):
-        for y in xrange(0,height):
+    for x in range(0,width):
+        for y in range(0,height):
             if dungeon[y,x]==0:
                 return (x,y)
 
@@ -74,8 +74,8 @@ def floodFill(dungeon,x,y,diag=True, search=0,replace=1):
     dungeon[y,x]=replace
 
     if diag:
-        for j in xrange(x-1,x+2):
-            for k in xrange(y-1,y+2):
+        for j in range(x-1,x+2):
+            for k in range(y-1,y+2):
                 if j==x and k==y:
                     pass
                 else:
@@ -109,8 +109,8 @@ def connected(dungeon,diag=True):
 def connected2(dungeon):
     d2 = numpy.array(dungeon)
     height,width = dungeon.shape
-    for x in xrange(0,width):
-        for y in xrange(0,height):
+    for x in range(0,width):
+        for y in range(0,height):
             if d2[y,x]==2:
                 d2[y,x]=1
             elif d2[y,x]>2:
@@ -120,9 +120,9 @@ def connected2(dungeon):
 def printDungeon(dungeon):
     
     height,width = dungeon.shape
-    for y in xrange(0,height):
+    for y in range(0,height):
         s = ''
-        for x in xrange(0,width):
+        for x in range(0,width):
             if dungeon[y,x]==0:
                 s+=' '
             elif dungeon[y,x]==2:
@@ -137,7 +137,7 @@ def printDungeon(dungeon):
                 s+='#'
             else:
                 s+='#'
-        print s
+        print(s)
 
 def trimDungeon(dungeon):
     height,width = dungeon.shape
@@ -193,8 +193,8 @@ def getRoom(width=50,height=50,rand=.55,seed=random.randint(100000,100000000),fi
 
     height,width = dungeon.shape
 
-    for x in xrange(0,width):
-        for y in xrange(0,height):
+    for x in range(0,width):
+        for y in range(0,height):
             if dungeon[y,x] == 1:
                 dungeon[y,x] = 6
 
@@ -209,4 +209,4 @@ if __name__=='__main__':
     d = cellDungeon(width=10,height=10,first=2,second=0,c=4)
     printDungeon(d)
     printDungeon(trimDungeon(d))
-    print connected(d)
+    print(connected(d))

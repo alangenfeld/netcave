@@ -1,7 +1,8 @@
 #!/usr/bin/python
 
 # -*- coding: utf-8 -*-
-import random, numpy, cellular
+import random, numpy
+import pyDungeon.cellular as cellular
 
 # 0 - floor
 # 1 - wall
@@ -21,7 +22,7 @@ def angDungeon(depth,width=128,height=128,rooms=50):
     newRoomList = []
 
     #generate rooms
-    for x in xrange(0,rooms):
+    for x in range(0,rooms):
         #print "what?"
         if depth<3:
             room = rectRoom(6,12)
@@ -38,8 +39,8 @@ def angDungeon(depth,width=128,height=128,rooms=50):
         valid = True
 
         #check if room can be placed
-        for x in xrange(loc[0],loc[0]+room.shape[1]):
-            for y in xrange(loc[1],loc[1]+room.shape[0]):
+        for x in range(loc[0],loc[0]+room.shape[1]):
+            for y in range(loc[1],loc[1]+room.shape[0]):
                 if roomFlag[y,x] == 1:
                     valid=False
                     break
@@ -48,8 +49,8 @@ def angDungeon(depth,width=128,height=128,rooms=50):
 
         if valid:
             #place room
-            for x in xrange(loc[0],loc[0]+room.shape[1]):
-                for y in xrange(loc[1],loc[1]+room.shape[0]):
+            for x in range(loc[0],loc[0]+room.shape[1]):
+                for y in range(loc[1],loc[1]+room.shape[0]):
                     dungeon[y,x] = room[y-loc[1],x-loc[0]]
                     roomFlag[y,x] = 1
 
@@ -61,17 +62,17 @@ def angDungeon(depth,width=128,height=128,rooms=50):
     #dungeon[newRoomList[len(newRoomList)-1][1],newRoomList[len(newRoomList)-1][0]] = 4
 
     #Block outer walls
-    for xr in xrange(0,dungeon.shape[1]):
+    for xr in range(0,dungeon.shape[1]):
         dungeon[0,xr] = 2
         dungeon[dungeon.shape[0]-1,xr]=2
 
-    for yr in xrange(0,dungeon.shape[0]):
+    for yr in range(0,dungeon.shape[0]):
         dungeon[yr,0] = 2
         dungeon[yr,dungeon.shape[1]-1]=2
 
-    for x in xrange(0,len(newRoomList)):
+    for x in range(0,len(newRoomList)):
         for dest in newRoomList[x+1:]:
-            dungeon = tunnel(dungeon,roomFlag,[newRoomList[x][0],newRoomList[x][1]],[dest[0],dest[1]],maxLength=(width+height)/2+4*(depth-3))
+            dungeon = tunnel(dungeon,roomFlag,[newRoomList[x][0],newRoomList[x][1]],[dest[0],dest[1]],maxLength=(width+height)/2+4*max(depth-3,0)+3*max(depth-9,0))
         
     
     while not(cellular.connected2(dungeon)):
@@ -86,11 +87,11 @@ def rectRoom(minD,maxD):
 
     room = numpy.zeros((random.random()*rng+minD,random.random()*rng+minD),dtype=numpy.uint)
 
-    for xr in xrange(0,room.shape[1]):
+    for xr in range(0,room.shape[1]):
         room[0,xr] = 1;
         room[room.shape[0]-1,xr]=1;
 
-    for yr in xrange(0,room.shape[0]):
+    for yr in range(0,room.shape[0]):
         room[yr,0] = 1;
         room[yr,room.shape[1]-1]=1; 
 
@@ -119,8 +120,7 @@ def tunnel(dungeon, roomFlag, source, dest, maxLength=128):
         
         pos = [[1,0],[0,1],[-1,0],[0,-1]]
         pos2 = []
-        if(random.random()<.85):
-
+        if(random.random() < 0.85):
             if loc[0]<dest[0]:
                 pos2+= [[1,0]]
             elif loc[0]>dest[0]:
@@ -137,16 +137,17 @@ def tunnel(dungeon, roomFlag, source, dest, maxLength=128):
 
         temp = int(random.random()*6)
         
-        if temp==6:
+        if temp==5:
             direction[1] = int(random.random()*6+4)
         else:
             direction[1] = int(random.random()*min(5,1+abs(loc[0]-dest[0])+abs(loc[1]-dest[1])))
+        #print(abs(loc[0]-dest[0])+abs(loc[1]-dest[1]))
 
-
-        length += direction[1]
+        #print('-> '+repr(direction[1]))
+        #length += direction[1]
 
         #place tunnel segment
-        for x in xrange(1,direction[1]+1):
+        for x in range(1,direction[1]+1):
             temp = [0,0]
             temp[0] = loc[0] + direction[0][0]
             temp[1] = loc[1] + direction[0][1]
@@ -181,7 +182,7 @@ def tunnel(dungeon, roomFlag, source, dest, maxLength=128):
                 break
 
     #if tunneling was succesfull, write changes to dungeon
-    #print length
+    #print(length)
     if length<maxLength:
         return tunnels
 
