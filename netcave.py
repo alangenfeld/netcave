@@ -1,12 +1,12 @@
-#import VRScript
+import VRScript
 import stupidDungeon
 
 CAVE = 3
-WIDTH = 16
-HEIGHT = 16
+WIDTH = 32
+HEIGHT = 32
 
 
-#dungeon = stupidDungeon.newDungeon(1, WIDTH, HEIGHT, 15)
+#dungeon = stupidDungeon.newDungeon(3, WIDTH, HEIGHT, 25)
 dungeon = stupidDungeon.getDungeon()
 
 # Floor 
@@ -24,16 +24,17 @@ phys.setCollisionType(VRScript.Core.CollisionType.Dynamic)
 floor.attach(phys)
 
 
-for y in dungeon :
-    for x in y :
+for y in range(len(dungeon)) :
+    for x in range(len(dungeon[y])) :
         if dungeon[y][x] == 1 :
-            cube_e = VRScript.Core.Entity('cube['+y+']['+x+']')
+            name = 'cube[' + str(y) + '][' + str(x) + ']'
+            cube_e = VRScript.Core.Entity(name)
             cube_m = VRScript.Resources.Box(VRScript.Math.Vector(1,1,1)*(CAVE/2),
                                             VRScript.Math.Point((x*CAVE) + CAVE/2,
                                                                 (y*CAVE) + CAVE/2,
                                                                 CAVE/2))
             
-            cube_e.attach(VRScript.Core.Renderable('cube['+y+']['+x+']',cube_m))
+            cube_e.attach(VRScript.Core.Renderable(name,cube_m))
             cube_e.renderable('').show()
             cube_e.attach(phys)
             

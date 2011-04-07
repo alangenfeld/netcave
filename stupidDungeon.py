@@ -21,10 +21,7 @@ py3x - path to python with numpy installed, defaults to "C:\python31\python.exe"
     dungeon = pickle.load(open('tempDungeon.pkl','rb'))
     return dungeon
 
-def getDungeon():
-''' 
-Return the current tempDungeon.pkl
-'''
+def getDungeon() :
     dungeon = pickle.load(open('tempDungeon.pkl','rb'))
     return dungeon
 
