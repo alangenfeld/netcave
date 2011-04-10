@@ -2,12 +2,11 @@ import VRScript
 import stupidDungeon
 
 CAVE = 3
-WIDTH = 16
-HEIGHT = 16
+WIDTH = 64
+HEIGHT = 64
 
 
-dungeon = stupidDungeon.newDungeon(3, WIDTH, HEIGHT, 25)
-#dungeon = stupidDungeon.getDungeon()
+dungeon = stupidDungeon.getDungeon('DungeonLibrary/L1/2')
 
 # Floor 
 # floor = VRScript.Core.Entity('Floor')
@@ -38,8 +37,9 @@ for y in range(len(dungeon)) :
 #start[0] = (WIDTH/2)*CAVE - start[0]*CAVE
 #start[1] = (HEIGHT/2)*CAVE - start[1]*CAVE
 print(start)
-start[0] = start[0]*CAVE + CAVE/2
-start[1] = start[1]*CAVE + CAVE/2
+start[0] = start[0]*CAVE# + CAVE/2
+start[1] = start[1]*CAVE# + CAVE/2
+print(start)
 
 cubelist = []
 
@@ -59,17 +59,27 @@ for y in range(len(dungeon)) :
             cube_e.movable().setPose(VRScript.Math.Matrix().
                                      preTranslation(VRScript.Math.Vector(((x*CAVE) + CAVE/2) - start[0],
                                                                          ((y*CAVE) + CAVE/2) - start[1],
-                                                                         0)))
+                                                                         -CAVE)))
 
             cube_m = VRScript.Resources.Mesh(name, 'cube.osg')
             cube_e.attach(VRScript.Core.Renderable(name,cube_m))
-            cube_p = VRScript.Core.Physical(name, VRScript.Resources.BoundingBox(cube_m))
-            cube_p.setPhysicsProperties(VRScript.Core.PhysicsProperties(0,.1,.1,.1,.2))
+            #cube_p = VRScript.Core.Physical(name, VRScript.Resources.BoundingBox(cube_m))
+            #cube_p.setPhysicsProperties(VRScript.Core.PhysicsProperties(0,.1,.1,.1,.2))
             #cube_p.setCollisionType(VRScript.Core.CollisionType.Dynamic)
             cube_e.renderable('').show()
-            cube_e.attach(cube_p)
+            #cube_e.attach(cube_p)
             cubelist  += [cube_e]
         elif dungeon[y][x] == 7 :
             print('up stairs')
+        elif dungeon[y][x] == 9 :
+            name = 'cube[' + str(y) + '][' + str(x) + ']'
+            cube_e = VRScript.Core.Entity(name)
+
+            cube_m = VRScript.Resources.Box(VRScript.Math.Vector(.5,.5,.5), 
+                                            VRScript.Math.Point(x*CAVE,y*CAVE,CAVE/2))
+
+            cube_e.attach(VRScript.Core.Renderable(name,cube_m))
+            cube_e.renderable('').show()
+
         elif dungeon[y][x] == 8 :
             print('down stairs')
