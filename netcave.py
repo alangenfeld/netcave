@@ -57,8 +57,8 @@ for y in range(len(dungeon)) :
 #                                                                         ((y*CAVE + start[1]) + CAVE/2) - WIDTH*CAVE/2,
 #                                                                         0)))
             cube_e.movable().setPose(VRScript.Math.Matrix().
-                                     preTranslation(VRScript.Math.Vector(((x*CAVE) + CAVE/2) - start[0],
-                                                                         ((y*CAVE) + CAVE/2) - start[1],
+                                     preTranslation(VRScript.Math.Vector((((x*CAVE) + CAVE/2) - start[0]),
+                                                                         (((y*CAVE) + CAVE/2) - start[1]),
                                                                          -CAVE)))
 
             cube_m = VRScript.Resources.Mesh(name, 'cube.osg')
@@ -76,7 +76,7 @@ for y in range(len(dungeon)) :
             cube_e = VRScript.Core.Entity(name)
 
             cube_m = VRScript.Resources.Box(VRScript.Math.Vector(.5,.5,.5), 
-                                            VRScript.Math.Point(x*CAVE,y*CAVE,CAVE/2))
+                                            VRScript.Math.Point(x*CAVE + CAVE/2,y*CAVE + CAVE/2,CAVE/2))
 
             cube_e.attach(VRScript.Core.Renderable(name,cube_m))
             cube_e.renderable('').show()
