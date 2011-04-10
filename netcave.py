@@ -2,12 +2,12 @@ import VRScript
 import stupidDungeon
 
 CAVE = 3
-WIDTH = 32
-HEIGHT = 32
+WIDTH = 16
+HEIGHT = 16
 
 
-#dungeon = stupidDungeon.newDungeon(3, WIDTH, HEIGHT, 25)
-dungeon = stupidDungeon.getDungeon()
+dungeon = stupidDungeon.newDungeon(3, WIDTH, HEIGHT, 25)
+#dungeon = stupidDungeon.getDungeon()
 
 # Floor 
 # floor = VRScript.Core.Entity('Floor')
@@ -29,20 +29,22 @@ start = []
 
 for y in range(len(dungeon)) :
     for x in range(len(dungeon[y])) :
-        if dungeon[y][x] == 0 :
+        if dungeon[y][x] == 9 :
             start = [x,y]
             break
     if not(start == []):
         break
 		
-start[0] = (WIDTH/2)*CAVE - start[0]*CAVE
-start[1] = (HEIGHT/2)*CAVE - start[1]*CAVE
+#start[0] = (WIDTH/2)*CAVE - start[0]*CAVE
+#start[1] = (HEIGHT/2)*CAVE - start[1]*CAVE
+print(start)
+start[0] = start[0]*CAVE + CAVE/2
+start[1] = start[1]*CAVE + CAVE/2
+
 cubelist = []
 
 VRScript.Interaction.setNavigationSpeed(6,0)
 
-
-           
 for y in range(len(dungeon)) :
     for x in range(len(dungeon[y])) :
         if dungeon[y][x] == 1 or dungeon[y][x] == 2 :
@@ -50,9 +52,13 @@ for y in range(len(dungeon)) :
             cube_e = VRScript.Core.Entity(name)
             # translate and attach mesh
 
+#            cube_e.movable().setPose(VRScript.Math.Matrix().
+#                                     preTranslation(VRScript.Math.Vector(((x*CAVE + start[0]) + CAVE/2) - HEIGHT*CAVE/2,
+#                                                                         ((y*CAVE + start[1]) + CAVE/2) - WIDTH*CAVE/2,
+#                                                                         0)))
             cube_e.movable().setPose(VRScript.Math.Matrix().
-                                     preTranslation(VRScript.Math.Vector(((x*CAVE + start[0]) + CAVE/2) - HEIGHT*CAVE/2,
-                                                                         ((y*CAVE + start[1]) + CAVE/2) - WIDTH*CAVE/2,
+                                     preTranslation(VRScript.Math.Vector(((x*CAVE) + CAVE/2) - start[0],
+                                                                         ((y*CAVE) + CAVE/2) - start[1],
                                                                          0)))
 
             cube_m = VRScript.Resources.Mesh(name, 'cube.osg')
@@ -61,6 +67,9 @@ for y in range(len(dungeon)) :
             cube_p.setPhysicsProperties(VRScript.Core.PhysicsProperties(0,.1,.1,.1,.2))
             #cube_p.setCollisionType(VRScript.Core.CollisionType.Dynamic)
             cube_e.renderable('').show()
-            cubelist  += [cube_e]
             cube_e.attach(cube_p)
-            
+            cubelist  += [cube_e]
+        elif dungeon[y][x] == 7 :
+            print('up stairs')
+        elif dungeon[y][x] == 8 :
+            print('down stairs')
