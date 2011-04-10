@@ -11,9 +11,12 @@ import pyDungeon.cellular as cellular
 # 4 - closed door
 # 5 - trapped door
 # 6 - inner wall
+# 7 - stairs up
+# 8 - stairs down
+# 9 - spawn
 
 
-def angDungeon(depth,width=128,height=128,rooms=50):
+def angDungeon(depth,width=128,height=128,rooms=50,noPrint=False):
     dungeon = numpy.ones((height,width),dtype=numpy.uint)
     roomFlag = numpy.zeros((height,width),dtype=numpy.uint)
 
@@ -73,12 +76,17 @@ def angDungeon(depth,width=128,height=128,rooms=50):
     for x in range(0,len(newRoomList)):
         for dest in newRoomList[x+1:]:
             dungeon = tunnel(dungeon,roomFlag,[newRoomList[x][0],newRoomList[x][1]],[dest[0],dest[1]],maxLength=(width+height)/2+4*max(depth-3,0)+3*max(depth-9,0))
-        
-    
+          
     while not(cellular.connected2(dungeon)):
         #cellular.printDungeon(dungeon)
-        dungeon = angDungeon(depth,width,height,rooms)
+        dungeon = angDungeon(depth,width,height,rooms,noPrint=True)
+        
+    
 
+    if not(noPrint):
+        dungeon = placeStairs(dungeon)
+        cellular.printDungeon(dungeon)
+    
     return dungeon
 
 def rectRoom(minD,maxD):
@@ -221,6 +229,67 @@ def mark(dungeon,loc,direction):
             dungeon[loc[1]-1,loc[0]] = 2
 
     return dungeon
+    
+def placeStairs(dungeon):
+    locList = []
+    height, width = dungeon.shape
+    
+    for x in range(1,width-1):
+        for y in range(1,height-1):
+            if dungeon[y,x]==1:
+                typeList = [0,0,0,0,0,0,0,0,0,0]
+                typeList[dungeon[y+1,x]] += 1
+                typeList[dungeon[y-1,x]] += 1
+                typeList[dungeon[y,x+1]] += 1
+                typeList[dungeon[y,x-1]] += 1
+                if typeList[0]>1 and typeList[0]+typeList[1]+typeList[2] == 4:
+                    locList += [(x,y)]
+                     
+    if len(locList)<2:
+        print('Critical Failure - unable to place stairs\n\tGame over man, game over!')
+                 
+    bestDist = 0
+    while bestDist<2:
+        randList = []
+        for k in range(0,10):
+            randList += [locList[int(random.random()*len(locList))]]
+            
+        bestUp = randList[0]
+        bestDown = randList[1]
+        bestDist = abs(randList[1][0] - randList[0][0]) + abs(randList[1][1] - randList[0][1])
+            
+        for j in range(0,10):
+            for k in range(j,10):
+                if j!=k:
+                    dist = abs(randList[j][0] - randList[k][0]) + abs(randList[j][1] - randList[k][1])
+                    if dist>bestDist:
+                        bestDist = dist
+                        bestUp = randList[j]
+                        bestDown = randList[k]
+                        
+    dungeon[bestUp[1],bestUp[0]] = 7
+    dungeon[bestDown[1],bestDown[0]] = 8
+                    
+    if dungeon[bestUp[1]+1,bestUp[0]] == 0:
+        dungeon[bestUp[1]+1,bestUp[0]] = 9
+    elif dungeon[bestUp[1]-1,bestUp[0]] == 0:
+        dungeon[bestUp[1]-1,bestUp[0]] = 9
+    elif dungeon[bestUp[1],bestUp[0]+1] == 0:
+        dungeon[bestUp[1],bestUp[0]+1] = 9
+    elif dungeon[bestUp[1],bestUp[0]-1] == 0:
+        dungeon[bestUp[1],bestUp[0]-1] = 9
+        
+    if dungeon[bestDown[1]+1,bestDown[0]] == 0:
+        dungeon[bestDown[1]+1,bestDown[0]] = 9
+    elif dungeon[bestDown[1]-1,bestDown[0]] == 0:
+        dungeon[bestDown[1]-1,bestDown[0]] = 9
+    elif dungeon[bestDown[1],bestDown[0]+1] == 0:
+        dungeon[bestDown[1],bestDown[0]+1] = 9
+    elif dungeon[bestDown[1],bestDown[0]-1] == 0:
+        dungeon[bestDown[1],bestDown[0]-1] = 9
+        
+    return dungeon
+            
 
 if __name__=="__main__":
     cellular.printDungeon(angDungeon(9,64,64,50))

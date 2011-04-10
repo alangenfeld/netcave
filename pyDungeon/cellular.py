@@ -135,6 +135,12 @@ def printDungeon(dungeon):
                 s+='T'
             elif dungeon[y,x]==6:
                 s+='#'
+            elif dungeon[y,x]==7:
+                s+="<"
+            elif dungeon[y,x]==8:
+                s+=">"
+            elif dungeon[y,x]==9:
+                s+="S"
             else:
                 s+='#'
         print(s)
