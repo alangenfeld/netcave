@@ -1,72 +1,17 @@
 import VRScript
 import stupidDungeon, level
+from gameController import gameController
 
 CAVE = 3
 WIDTH = 64
 HEIGHT = 64
-DELAY = 15
-DEVWALL = True
-MOVEAMOUNT = 3.0/DELAY
-USER = VRScript.Core.Entity('User0')
-USERPOS = [0,0]
+DEVELOP = False
 
 LEVEL = level.level()
 dungeon = LEVEL.getFloor(0).dungeon
 
-class gameController(VRScript.Core.Behavior):
-    timer = 0
-    moveVec = VRScript.Math.Vector(0,0,0);
-    def init(self, entity=None):
-        VRScript.Core.Behavior.init(self,entity)
-        
-    def OnInit(self,info):
-        pass
-    
-    def setLevel(self,level):
-        self.level = level
-    
-    def OnUpdate(self,info):
-        if self.timer > 0:
-            USER.physical('').applyImpulse(self.moveVec,VRScript.Math.Vector(0,0,0))
-            self.timer -= 1    
-        if self.timer == 0:
-            button =  VRScript.Util.getControllerState(0)['button']
-            joystick = VRScript.Util.getControllerState(0)['joystickAxis']
-            if DEVWALL:
-                if button[0] and button[2] and self.level.getCurrentFloor().isPassable(USERPOS[0],USERPOS[1]+1):
-                    self.moveVec = VRScript.Math.Vector(0,MOVEAMOUNT,0)
-                    self.timer=DELAY
-                    USERPOS[1] +=1
-                elif button[1] and button[2] and self.level.getCurrentFloor().isPassable(USERPOS[0],USERPOS[1]-1):
-                    self.moveVec = VRScript.Math.Vector(0,-MOVEAMOUNT,0)
-                    self.timer=DELAY
-                    USERPOS[1] -=1
-                elif button[0] and not(button[2]) and self.level.getCurrentFloor().isPassable(USERPOS[0]-1,USERPOS[1]):
-                    self.moveVec = VRScript.Math.Vector(-MOVEAMOUNT,0,0)
-                    self.timer=DELAY
-                    USERPOS[0] -=1
-                elif button[1] and not(button[2]) and self.level.getCurrentFloor().isPassable(USERPOS[0]+1,USERPOS[1]):
-                    self.moveVec = VRScript.Math.Vector(MOVEAMOUNT,0,0)
-                    self.timer=DELAY
-                    USERPOS[0] +=1
-            else:
-                if joystick[1] > 0.8  and self.level.getCurrentFloor().isPassable(USERPOS[0],USERPOS[1]+1):
-                    self.moveVec = VRScript.Math.Vector(0,MOVEAMOUNT,0)
-                    self.timer=DELAY
-                    USERPOS[1] +=1
-                elif joystick[1] < -0.8 and self.level.getCurrentFloor().isPassable(USERPOS[0],USERPOS[1]-1):
-                    self.moveVec = VRScript.Math.Vector(0,-MOVEAMOUNT,0)
-                    self.timer=DELAY
-                    USERPOS[1] -=1
-                elif joystick[0] < -0.8 and self.level.getCurrentFloor().isPassable(USERPOS[0]-1,USERPOS[1]):
-                    self.moveVec = VRScript.Math.Vector(-MOVEAMOUNT,0,0)
-                    self.timer=DELAY
-                    USERPOS[0] -=1
-                elif joystick[0] > 0.8 and self.level.getCurrentFloor().isPassable(USERPOS[0]+1,USERPOS[1]):
-                    self.moveVec = VRScript.Math.Vector(MOVEAMOUNT,0,0)
-                    self.timer=DELAY
-                    USERPOS[0] +=1
 
+            
 def makeEntity(typing,x,y,z,offset):
     name = typing+'[' + str(y) + '][' + str(x) + ']'
     wall_e = VRScript.Core.Entity(name)
@@ -106,14 +51,18 @@ def makeEntity(typing,x,y,z,offset):
 # insert floor 
 VRScript.Core.Entity('e_ground').attach(VRScript.Core.Physical('p_ground',VRScript.Resources.Plane()))
 VRScript.Interaction.enableNavigation(False,0)
-USER.physical('').setPhysicsProperties(VRScript.Core.PhysicsProperties(1,.1,.1,.1,.2))
+#USER.physical('').setPhysicsProperties(VRScript.Core.PhysicsProperties(1,.1,.1,.1,.2))
 start = []
+
+gc = gameController()
+gc.setLevel(LEVEL)
+gc.setDevelop(DEVELOP)
 
 for y in range(len(dungeon)) :
     for x in range(len(dungeon[y])) :
         if dungeon[y][x] == 9 :
             start = [x,y]
-            USERPOS = [x,y]
+            gc.setUserPosition([x,y])
             break
     if not(start == []):
         break
@@ -150,8 +99,7 @@ for y in range(len(dungeon)) :
                 
             if dungeon[y][x-1]==1 or dungeon[y][x-1]==2:
                 entityList  += [makeEntity('BackWall',x,y,0,start)]
-gc = gameController()
-gc.setLevel(LEVEL)
+
         #elif dungeon[y][x] == 7 :
             #print('up stairs')
         #if dungeon[y][x] == 9 :
