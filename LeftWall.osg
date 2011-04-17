@@ -1,0 +1,162 @@
+MatrixTransform {
+  name "LeftWall"
+  nodeMask 0xffffffff
+  cullingActive TRUE
+  referenceFrame RELATIVE
+  Matrix {
+    1 0 0 0
+    0 1.19209e-007 1 0
+    0 -1 1.19209e-007 0
+    0 1.5 1.5 1
+  }
+  num_children 1
+  Geode {
+    name "LeftWall"
+    nodeMask 0xffffffff
+    cullingActive TRUE
+    num_drawables 1
+    Geometry {
+      DataVariance STATIC
+      StateSet {
+        DataVariance STATIC
+        rendering_hint DEFAULT_BIN
+        renderBinMode INHERIT
+        Material {
+          name "01 - Default"
+          ColorMode OFF
+          ambientColor 0.2 0.2 0.2 1
+          diffuseColor 0.8 0.8 0.8 1
+          specularColor 0 0 0 1
+          emissionColor 0 0 0 1
+          shininess 12.8
+        }
+        textureUnit 0 {
+          GL_TEXTURE_2D ON
+          Texture2D {
+            name "STONE_BR.JPG"
+            file "stone_br.jpg"
+            wrap_s REPEAT
+            wrap_t REPEAT
+            wrap_r REPEAT
+            min_filter LINEAR_MIPMAP_NEAREST
+            mag_filter LINEAR
+            maxAnisotropy 1
+            borderColor 0 0 0 0
+            borderWidth 0
+            useHardwareMipMapGeneration TRUE
+            unRefImageDataAfterApply TRUE
+            internalFormatMode USE_IMAGE_DATA_FORMAT
+            resizeNonPowerOfTwo TRUE
+          }
+        }
+      }
+      useDisplayList TRUE
+      useVertexBufferObjects FALSE
+      PrimitiveSets 1
+      {
+        DrawElementsUShort TRIANGLES 96
+        {
+          0 1 2 3 2 1 2 3 4 5
+          4 3 4 5 6 7 6 5 6 7
+          8 9 8 7 10 0 11 2 11 0
+          11 2 12 4 12 2 12 4 13 6
+          13 4 13 6 14 8 14 6 15 10
+          16 11 16 10 16 11 17 12 17 11
+          17 12 18 13 18 12 18 13 19 14
+          19 13 20 15 21 16 21 15 21 16
+          22 17 22 16 22 17 23 18 23 17
+          23 18 24 19 24 18 
+        }
+      }
+      VertexArray Vec3Array 25
+      {
+        -1.5 -0.75 -5.66234e-008
+        -1.5 -1.5 5.96244e-009
+        -0.75 -0.75 -5.66234e-008
+        -0.75 -1.5 5.96244e-009
+        0 -0.75 -5.66234e-008
+        0 -1.5 5.96244e-009
+        0.75 -0.75 -5.66234e-008
+        0.75 -1.5 5.96244e-009
+        1.5 -0.75 -5.66234e-008
+        1.5 -1.5 5.96244e-009
+        -1.5 0 0
+        -0.75 0 0
+        0 0 0
+        0.75 0 0
+        1.5 0 0
+        -1.5 0.75 5.66234e-008
+        -0.75 0.75 5.66234e-008
+        0 0.75 5.66234e-008
+        0.75 0.75 5.66234e-008
+        1.5 0.75 5.66234e-008
+        -1.5 1.5 -5.96244e-009
+        -0.75 1.5 -5.96244e-009
+        0 1.5 -5.96244e-009
+        0.75 1.5 -5.96244e-009
+        1.5 1.5 -5.96244e-009
+      }
+      NormalBinding PER_VERTEX
+      NormalArray Vec3Array 25
+      {
+        0 -7.54979e-008 1
+        0 8.34478e-008 1
+        0 -7.54979e-008 1
+        0 8.34478e-008 1
+        0 -7.54979e-008 1
+        0 8.34478e-008 1
+        0 -7.54979e-008 1
+        0 8.34478e-008 1
+        0 -7.54979e-008 1
+        0 8.34478e-008 1
+        0 -7.54979e-008 1
+        0 -7.54979e-008 1
+        0 -7.54979e-008 1
+        0 -7.54979e-008 1
+        0 -7.54979e-008 1
+        0 8.34478e-008 1
+        0 8.34478e-008 1
+        0 8.34478e-008 1
+        0 8.34478e-008 1
+        0 8.34478e-008 1
+        0 8.34478e-008 1
+        0 8.34478e-008 1
+        0 8.34478e-008 1
+        0 8.34478e-008 1
+        0 8.34478e-008 1
+      }
+      ColorBinding OVERALL
+      ColorArray Vec4ubArray 1       {
+        255 255 255 255
+      }
+      TexCoordArray 0 Vec2Array 25
+      {
+        0 0.25
+        0 0
+        0.25 0.25
+        0.25 0
+        0.5 0.25
+        0.5 0
+        0.75 0.25
+        0.75 0
+        1 0.25
+        1 0
+        0 0.5
+        0.25 0.5
+        0.5 0.5
+        0.75 0.5
+        1 0.5
+        0 0.75
+        0.25 0.75
+        0.5 0.75
+        0.75 0.75
+        1 0.75
+        0 1
+        0.25 1
+        0.5 1
+        0.75 1
+        1 1
+      }
+    }
+  }
+}
