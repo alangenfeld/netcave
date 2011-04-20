@@ -5,7 +5,7 @@ from gameController import gameController
 CAVE = 3
 WIDTH = 64
 HEIGHT = 64
-DEVELOP = False
+DEVELOP = True
 
 LEVEL = level.level()
 dungeon = LEVEL.getFloor(0).dungeon
@@ -53,6 +53,21 @@ VRScript.Core.Entity('e_ground').attach(VRScript.Core.Physical('p_ground',VRScri
 VRScript.Interaction.enableNavigation(False,0)
 #USER.physical('').setPhysicsProperties(VRScript.Core.PhysicsProperties(1,.1,.1,.1,.2))
 start = []
+
+# load lights
+base_lights = VRScript.Core.Entity( "BASE_LIGHTS" )
+base_lights_r = VRScript.Resources.Mesh( "BASE_LIGHTS_r", "OSG_Light_0_3.osg")
+base_lights.attach( VRScript.Core.Renderable( "BASE_LIGHTS_r", base_lights_r ) )
+base_lights.renderable('').show()
+
+real_lights = []
+
+for light in range( 4 ):
+    real_lights.append( VRScript.Core.Entity( "Light_%d" % (light+1) ) )
+    light_r = VRScript.Resources.Mesh( "LIGHT_r_%d" % (light+1), "OSG_Light_%d.osg" % (light+4))
+    real_lights[light].attach( VRScript.Core.Renderable( "LIGHT_r_%d" % (light+1), light_r ) )
+    real_lights[light].renderable('').show()
+
 
 gc = gameController()
 gc.setLevel(LEVEL)

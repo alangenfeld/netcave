@@ -66,7 +66,7 @@ class gameController(VRScript.Core.Behavior):
             
             movedir = -1
             facedir = self.getFacing()
-            if self.DEVELOP:
+            if self.DEVELOP or not joystick:
                 if button[0] and button[2] and self.level.getCurrentFloor().isPassable(USERPOS[0],USERPOS[1]+1):
                     movedir = 0
                 elif button[1] and button[2] and self.level.getCurrentFloor().isPassable(USERPOS[0],USERPOS[1]-1):

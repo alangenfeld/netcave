@@ -10,7 +10,12 @@ class floor():
         return self.dungeon[y][x]
         
     def isPassable(self, x, y):
-        return not(self.dungeon[y][x] == 1 or self.dungeon[y][x] == 2)
+        try:
+            passable = self.dungeon[y][x] != 1 and self.dungeon[y][x] != 2
+        except:
+            passable = False
+
+        return passable
         
 class level():
     floors = []

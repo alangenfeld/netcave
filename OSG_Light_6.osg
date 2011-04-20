@@ -1,0 +1,45 @@
+Group {
+  UniqueID Group_0
+  nodeMask 0xffffffff
+  cullingActive TRUE
+  StateSet {
+    UniqueID StateSet_1
+    DataVariance STATIC
+    rendering_hint DEFAULT_BIN
+    renderBinMode INHERIT
+    GL_LIGHT7 ON
+  }
+  num_children 1
+  Group {
+    UniqueID Group_2
+    nodeMask 0xffffffff
+    cullingActive TRUE
+    num_children 1
+    LightSource {
+      UniqueID LightSource_3
+      nodeMask 0xffffffff
+      cullingActive FALSE
+      StateSet {
+        DataVariance STATIC
+        rendering_hint DEFAULT_BIN
+        renderBinMode INHERIT
+        GL_LIGHT7 ON
+      }
+      referenceFrame RELATIVE
+      Light {
+        UniqueID Light_4
+        light_num 7
+        ambient 0.2 0.2 0.2 1
+        diffuse 0.1 0.4 0.1 1
+        specular 0.05 0.05 0.05 1
+        position -5 -2 3 1
+        direction 0 0 -1
+        constant_attenuation 1
+        linear_attenuation 0
+        quadratic_attenuation 0
+        spot_exponent 0
+        spot_cutoff 180
+      }
+    }
+  }
+}
