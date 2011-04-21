@@ -7,6 +7,7 @@ class gameController(VRScript.Core.Behavior):
     MOVEAMOUNT = 3.0/DELAY
     USERPOS = [0,0]
     DEVELOP = False
+    CLIP = 8
     
     def init(self, entity=None):
         VRScript.Core.Behavior.init(self,entity)
@@ -23,26 +24,57 @@ class gameController(VRScript.Core.Behavior):
         
     def setUserPosition(self,pos):
         self.USERPOS = pos
+        wallmap = self.level.getFloor(0).wallmap
+        self.showHide([pos[0]-self.CLIP,pos[0]+self.CLIP],[pos[1]-self.CLIP,pos[1]+self.CLIP],True)
+                        
+    def showHide(self,xrng, yrng, sh):
+        wallmap = self.level.getCurrentFloor().wallmap
+        for x in range(xrng[0],xrng[1]+1):
+            for y in range(yrng[0],yrng[1]+1):
+                loc = '[' + str(y) + '][' + str(x) + ']'
+                if loc in wallmap.keys():
+                    for wall in wallmap[loc]:
+                        if sh:
+                            wall.renderable('').show()
+                        else:
+                            pass#wall.renderable('').hide()
         
     def foreward(self):
         self.moveVec = VRScript.Math.Vector(0,self.MOVEAMOUNT,0)
         self.timer=self.DELAY
+        self.showHide([self.USERPOS[0]-self.CLIP,self.USERPOS[0]+self.CLIP],
+                 [self.USERPOS[1]-self.CLIP,self.USERPOS[1]-self.CLIP],False)
         self.USERPOS[1] +=1
+        self.showHide([self.USERPOS[0]-self.CLIP,self.USERPOS[0]+self.CLIP],
+                 [self.USERPOS[1]+self.CLIP,self.USERPOS[1]+self.CLIP],True)
         
     def backward(self):
         self.moveVec = VRScript.Math.Vector(0,-self.MOVEAMOUNT,0)
         self.timer=self.DELAY
+        self.showHide([self.USERPOS[0]-self.CLIP,self.USERPOS[0]+self.CLIP],
+                 [self.USERPOS[1]+self.CLIP,self.USERPOS[1]+self.CLIP],False)
         self.USERPOS[1] -=1
+        self.showHide([self.USERPOS[0]-self.CLIP,self.USERPOS[0]+self.CLIP],
+                 [self.USERPOS[1]-self.CLIP,self.USERPOS[1]-self.CLIP],True)
         
     def left(self):
         self.moveVec = VRScript.Math.Vector(-self.MOVEAMOUNT,0,0)
         self.timer=self.DELAY
+        self.showHide([self.USERPOS[0]+self.CLIP,self.USERPOS[0]+self.CLIP],
+                 [self.USERPOS[1]-self.CLIP,self.USERPOS[1]+self.CLIP],True)
         self.USERPOS[0] -=1
+        self.showHide([self.USERPOS[0]-self.CLIP,self.USERPOS[0]-self.CLIP],
+                 [self.USERPOS[1]-self.CLIP,self.USERPOS[1]+self.CLIP],True)
+        
         
     def right(self):
         self.moveVec = VRScript.Math.Vector(self.MOVEAMOUNT,0,0)
         self.timer=self.DELAY
+        self.showHide([self.USERPOS[0]-self.CLIP,self.USERPOS[0]-self.CLIP],
+                 [self.USERPOS[1]-self.CLIP,self.USERPOS[1]+self.CLIP],True)
         self.USERPOS[0] +=1
+        self.showHide([self.USERPOS[0]+self.CLIP,self.USERPOS[0]+self.CLIP],
+                 [self.USERPOS[1]-self.CLIP,self.USERPOS[1]+self.CLIP],True)
         
     def getFacing(self):
         WAND = self.WAND
@@ -64,6 +96,7 @@ class gameController(VRScript.Core.Behavior):
             button =  VRScript.Util.getControllerState(0)['button']
             joystick = VRScript.Util.getControllerState(0)['joystickAxis']
             
+            #print(repr(USER.movable().getPose().x.w)+","+repr(USER.movable().getPose().y.w))
             movedir = -1
             facedir = self.getFacing()
             if self.DEVELOP or not joystick:
@@ -86,6 +119,7 @@ class gameController(VRScript.Core.Behavior):
                     movedir = 1
             
             if movedir>=0:
+                #print(str(USER.movable().getPose().getTranslation().x)+","+str(USER.movable().getPose().getTranslation().y))
                 if (movedir+facedir)%4 == 0:
                     self.foreward()
                 elif (movedir+facedir)%4 == 1:
@@ -96,8 +130,9 @@ class gameController(VRScript.Core.Behavior):
                     self.left()
                 
     def OnUpdate(self,info):
+        print(str(self.USER.movable().getPose().getTranslation().x)+","+str(self.USER.movable().getPose().getTranslation().y))    
         if self.timer > 0:
             self.USER.physical('').applyImpulse(self.moveVec,VRScript.Math.Vector(0,0,0))
-            self.timer -= 1    
+            self.timer -= 1 
         if self.timer == 0:
             self.moveUser()

@@ -7,33 +7,11 @@ WIDTH = 64
 HEIGHT = 64
 DEVELOP = True
 
+
 LEVEL = level.level()
 dungeon = LEVEL.getFloor(0).dungeon
-
-
-            
-def makeEntity(typing,x,y,z,offset):
-    name = typing+'[' + str(y) + '][' + str(x) + ']'
-    wall_e = VRScript.Core.Entity(name)
-
-    # translate and attach mesh
-    wall_e.movable().setPose(VRScript.Math.Matrix().
-                        preTranslation(VRScript.Math.Vector((((x*CAVE) + CAVE/2.0) - offset[0]),
-                                                            (((y*CAVE) + CAVE/2.0) - offset[1]),
-                                                            z)))
-
-    wall_m = VRScript.Resources.Mesh(name, typing+'.osg')
-    wall_e.attach(VRScript.Core.Renderable(name,wall_m))
-    wall_e.renderable('').show()
     
-    #if not(typing=='Floor' or typing=='Cieling'):
-        #wall_p = VRScript.Resources.BoundingBox(wall_m)
-        #phys = VRScript.Core.Physical('phys'+name, wall_p)
-        #phys.setPhysicsProperties(VRScript.Core.PhysicsProperties(0,.1,.1,.1,.2))
-        #phys.setCollisionType(VRScript.Core.CollisionType.Static)
-        #wall_e.attach(phys)
-    
-    return wall_e
+
 
 # Floor 
 # floor = VRScript.Core.Entity('Floor')
@@ -73,20 +51,23 @@ gc = gameController()
 gc.setLevel(LEVEL)
 gc.setDevelop(DEVELOP)
 
-for y in range(len(dungeon)) :
-    for x in range(len(dungeon[y])) :
-        if dungeon[y][x] == 9 :
-            start = [x,y]
-            gc.setUserPosition([x,y])
-            break
-    if not(start == []):
-        break
-		
-start[0] = start[0]*CAVE + CAVE/2.0 + 5
-start[1] = start[1]*CAVE + CAVE/2.0 + 5
+start = LEVEL.getFloor(0).start
+gc.setUserPosition(start)
+    
+#move user to spawn
+#print(start[0]*CAVE,start[1]*CAVE)
+
+loc =  VRScript.Math.Vector(-5,-5,0,0)
+loc2 = VRScript.Math.Vector(start[0]*CAVE,start[1]*CAVE,loc.z,loc.w)
+VRScript.Core.Entity('User0').physical('').applyImpulse(loc2-loc,VRScript.Math.Vector(0,0,0))
+
+#start[0] = 0#start[0]*CAVE
+#start[1] = 0#start[1]*CAVE   
+
+
 
 entityList = []
-
+print('Loading Finished')
 #VRScript.Interaction.setNavigationSpeed(6,0)
 #cube_e = VRScript.Core.Entity('blarg')
 #cube_m = VRScript.Resources.Box(VRScript.Math.Vector(.5,.5,.5), 
@@ -96,24 +77,24 @@ entityList = []
 #cube_e.attach(VRScript.Core.Renderable('blarg',cube_m))
 #cube_e.renderable('').show()
 
-for y in range(len(dungeon)) :
-    for x in range(len(dungeon[y])) :
-        if dungeon[y][x] == 0 or  dungeon[y][x]>=3:
-            entityList  += [makeEntity('Floor',x,y,0,start)]
+#for y in range(len(dungeon)) :
+    #for x in range(len(dungeon[y])) :
+        #if dungeon[y][x] == 0 or  dungeon[y][x]>=3:
+            #entityList  += [makeEntity('Floor',x,y,0,start)]
             
-            entityList  += [makeEntity('Cieling',x,y,0,start)]
+            #entityList  += [makeEntity('Cieling',x,y,0,start)]
             
-            if dungeon[y-1][x]==1 or dungeon[y-1][x]==2:
-                entityList  += [makeEntity('RightWall',x,y,0,start)]
+            #if dungeon[y-1][x]==1 or dungeon[y-1][x]==2:
+                #entityList  += [makeEntity('RightWall',x,y,0,start)]
                 
-            if dungeon[y+1][x]==1 or dungeon[y+1][x]==2:
-                entityList  += [makeEntity('LeftWall',x,y,0,start)]
+            #if dungeon[y+1][x]==1 or dungeon[y+1][x]==2:
+                #entityList  += [makeEntity('LeftWall',x,y,0,start)]
                 
-            if dungeon[y][x+1]==1 or dungeon[y][x+1]==2:
-                entityList  += [makeEntity('FrontWall',x,y,0,start)]
+            #if dungeon[y][x+1]==1 or dungeon[y][x+1]==2:
+                #entityList  += [makeEntity('FrontWall',x,y,0,start)]
                 
-            if dungeon[y][x-1]==1 or dungeon[y][x-1]==2:
-                entityList  += [makeEntity('BackWall',x,y,0,start)]
+            #if dungeon[y][x-1]==1 or dungeon[y][x-1]==2:
+                #entityList  += [makeEntity('BackWall',x,y,0,start)]
 
         #elif dungeon[y][x] == 7 :
             #print('up stairs')
