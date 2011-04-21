@@ -19,8 +19,8 @@ class gameController(VRScript.Core.Behavior):
 #        self.torches[1].setID(1)
 #        self.torches[2].setID(2)
     
-    def setTorch(self, ID, x, y, z) :
-        self.torches[ID].setPos(x, y, z)
+#    def setTorch(self, ID, x, y, z) :
+#        self.torches[ID].setPos(x, y, z)
 
     def setLevel(self,level):
         self.level = level
