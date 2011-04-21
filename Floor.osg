@@ -5,7 +5,7 @@ Geode {
     StateSet {
       UniqueID StateSet_8
       DataVariance STATIC
-      rendering_hint DEFAULT_BIN
+      rendering_hint OPAQUE_BIN
       renderBinMode INHERIT
       textureUnit 0 {
         GL_TEXTURE_2D ON
@@ -172,7 +172,7 @@ Geode {
     DataVariance STATIC
     StateSet {
       DataVariance STATIC
-      rendering_hint DEFAULT_BIN
+      rendering_hint OPAQUE_BIN
       renderBinMode INHERIT
     }
     useDisplayList TRUE
