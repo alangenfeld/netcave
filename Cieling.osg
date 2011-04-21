@@ -184,7 +184,7 @@ MatrixTransform {
       DataVariance STATIC
       StateSet {
         DataVariance STATIC
-        rendering_hint DEFAULT_BIN
+        rendering_hint OPAQUE_BIN
         renderBinMode INHERIT
       }
       useDisplayList TRUE

@@ -3,6 +3,7 @@ import VRScript
 class gameController(VRScript.Core.Behavior):
     timer = 0
     moveVec = VRScript.Math.Vector(0,0,0)
+    torches = {torch(), torch(), torch()}
     DELAY = 15
     MOVEAMOUNT = 3.0/DELAY
     USERPOS = [0,0]
@@ -15,7 +16,13 @@ class gameController(VRScript.Core.Behavior):
     def OnInit(self,info):
         self.USER = VRScript.Core.Entity('User0')
         self.WAND = VRScript.Core.Entity('User0Hand')
+        self.torches[0].setID(0)
+        self.torches[1].setID(1)
+        self.torches[2].setID(2)
     
+    def setTorch(self, ID, x, y, z) :
+        self.torches[ID].setPos(x, y, z)
+
     def setLevel(self,level):
         self.level = level
         
