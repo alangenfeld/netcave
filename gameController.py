@@ -44,7 +44,7 @@ class gameController(VRScript.Core.Behavior):
                         if sh:
                             wall.renderable('').show()
                         else:
-                            pass#wall.renderable('').hide()
+                            wall.renderable('').hide()
         
     def foreward(self):
         self.moveVec = VRScript.Math.Vector(0,self.MOVEAMOUNT,0)
@@ -135,9 +135,18 @@ class gameController(VRScript.Core.Behavior):
                     self.backward()
                 elif (movedir+facedir)%4 == 3:
                     self.left()
+                for y in range(USERPOS[1]+4,USERPOS[1]-5,-1):
+                    narg = ""
+                    for x in range(USERPOS[0]-4,USERPOS[0]+5):
+                        if x>=0 and x<64:
+                            if x==USERPOS[0] and y==USERPOS[1]:
+                                narg+='X'
+                            else:
+                                narg+=str(self.level.getCurrentFloor().dungeon[y][x])
+                    print(narg)
                 
     def OnUpdate(self,info):
-        print(str(self.USER.movable().getPose().getTranslation().x)+","+str(self.USER.movable().getPose().getTranslation().y))    
+        #print(str(self.USER.movable().getPose().getTranslation().x)+","+str(self.USER.movable().getPose().getTranslation().y))    
         if self.timer > 0:
             self.USER.physical('').applyImpulse(self.moveVec,VRScript.Math.Vector(0,0,0))
             self.timer -= 1 
