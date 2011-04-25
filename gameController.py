@@ -143,7 +143,7 @@ class gameController(VRScript.Core.Behavior):
         for y in range(USERPOS[1]+4,USERPOS[1]-5,-1):
             narg = ""
             for x in range(USERPOS[0]-4,USERPOS[0]+5):
-                if x>=0 and x<64:
+                if x>=0 and x<64 and y>=0 and y<64:
                     if x==USERPOS[0] and y==USERPOS[1]:
                         narg+='X'
                     else:
@@ -160,6 +160,8 @@ class gameController(VRScript.Core.Behavior):
                             narg += '<'
                         elif t == 8:
                             narg += '>'
+                else:
+                    narg+='#'
             mini += narg + '\n'
         return mini
                 
