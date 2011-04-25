@@ -33,7 +33,28 @@ class floor():
         return passable
         
     def generateMobs(self):
-        pass
+        spawnPLocs = []
+        spawnLocs = []
+        for y in range(len(self.dungeon)) :
+            for x in range(len(self.dungeon[y])) :
+                if self.dungeon[y][x] == 0 : 
+                    spawnPLocs +=[[x,y]]
+        minM = 10+self.depth
+        maxM = minM+6+self.depth
+        rm = int(random.random()*(maxM-minM)+minM)
+        while(len(spawnLocs)<rm):
+            consider = spawnPLocs[int(random.random()*len(spawnPLocs))]
+            if consider in spawnLocs:
+                continue
+            if self.isPassable(y+1,x) and self.isPassable(y-1,x) and self.isPassable(y,x+1) and self.isPassable(y,x-1):
+                spawnLocs += consider
+            else:
+                if random.random()<.5:
+                    spawnLocs += consider
+           
+        print(spawnLocs)   
+        #generate mob classes
+            
     
     def generateItems(self):
         pass
@@ -84,7 +105,7 @@ class floor():
         preTranslation(VRScript.Math.Vector(((x*self.CAVE) + offset[0]),
                                             ((y*self.CAVE) + offset[1]),
                                             z)))
-        print(str((x*self.CAVE) + offset[0])+","+str((y*self.CAVE) + offset[1]))
+        #print(str((x*self.CAVE) + offset[0])+","+str((y*self.CAVE) + offset[1]))
         wall_m = VRScript.Resources.Mesh(name, typing+'.osg')
         wall_e.attach(VRScript.Core.Renderable(name,wall_m))
         wall_e.renderable('').hide()

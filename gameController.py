@@ -135,15 +135,33 @@ class gameController(VRScript.Core.Behavior):
                     self.backward()
                 elif (movedir+facedir)%4 == 3:
                     self.left()
-                for y in range(USERPOS[1]+4,USERPOS[1]-5,-1):
-                    narg = ""
-                    for x in range(USERPOS[0]-4,USERPOS[0]+5):
-                        if x>=0 and x<64:
-                            if x==USERPOS[0] and y==USERPOS[1]:
-                                narg+='X'
-                            else:
-                                narg+=str(self.level.getCurrentFloor().dungeon[y][x])
-                    print(narg)
+                print('\n'+self.getMiniMap())
+                    
+    def getMiniMap(self):
+        USERPOS = self.USERPOS
+        mini = ""
+        for y in range(USERPOS[1]+4,USERPOS[1]-5,-1):
+            narg = ""
+            for x in range(USERPOS[0]-4,USERPOS[0]+5):
+                if x>=0 and x<64:
+                    if x==USERPOS[0] and y==USERPOS[1]:
+                        narg+='X'
+                    else:
+                        t = self.level.getCurrentFloor().dungeon[y][x]
+                        if t == 0 or t == 9:
+                            narg += ' '
+                        elif t == 1 or t == 2 or t == 6:
+                            narg += '#'
+                        elif t == 3:
+                            narg += '('
+                        elif t == 4 or t == 5:
+                            narg += 'D'
+                        elif t == 7:
+                            narg += '<'
+                        elif t == 8:
+                            narg += '>'
+            mini += narg + '\n'
+        return mini
                 
     def OnUpdate(self,info):
         #print(str(self.USER.movable().getPose().getTranslation().x)+","+str(self.USER.movable().getPose().getTranslation().y))    
