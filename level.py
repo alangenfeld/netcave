@@ -1,5 +1,6 @@
 import stupidDungeon,os,random
 import VRScript
+#import Enemy
 
 # 0 - floor
 # 1 - wall
@@ -98,7 +99,7 @@ class floor():
            
         print(spawnLocs)   
         #generate mob classes
-            
+## Enemy.spawnLoc("AntLion", "BugMove.fbx", spawnPLocs[0][0]*3, spawnPLocs[0][1]*3)                        
     
     def generateItems(self):
         pass

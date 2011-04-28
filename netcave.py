@@ -1,6 +1,7 @@
 import VRScript
 import stupidDungeon, level
 from gameController import gameController
+#import Weapon
 
 CAVE = 3
 WIDTH = 64
