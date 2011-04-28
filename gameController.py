@@ -1,9 +1,10 @@
 import VRScript
+import torch
 
 class gameController(VRScript.Core.Behavior):
     timer = 0
     moveVec = VRScript.Math.Vector(0,0,0)
-#    torches = {torch(), torch(), torch()}
+    torches = [torch.torch(), torch.torch(), torch.torch(), torch.torch()]
     DELAY = 15
     MOVEAMOUNT = 3.0/DELAY
     USERPOS = [0,0]
@@ -16,12 +17,14 @@ class gameController(VRScript.Core.Behavior):
     def OnInit(self,info):
         self.USER = VRScript.Core.Entity('User0')
         self.WAND = VRScript.Core.Entity('User0Hand')
-#        self.torches[0].setID(0)
-#        self.torches[1].setID(1)
-#        self.torches[2].setID(2)
+        self.torches[0].setID(0)
+        self.torches[1].setID(1)
+        self.torches[2].setID(2)
+        self.torches[3].setID(3)
     
-#    def setTorch(self, ID, x, y, z) :
-#        self.torches[ID].setPos(x, y, z)
+    def setTorch(self, ID, x, y, z) :
+        self.torches[ID].setPos(x, y, z)
+        # set light
 
     def setLevel(self,level):
         self.level = level
@@ -195,3 +198,27 @@ class gameController(VRScript.Core.Behavior):
             self.moveUser()
         self.level.setLight( 0, ( 0, 0, 0, 1 ) )
         #self.level.setLight( 1, ( 0, 0, -9, 1 ) )
+
+    def OnButtonPress(self, cbInfo, btnInfo, intInfo):
+        print(str(btnInfo.button))
+        if (btnInfo.button == 4):
+            pos = self.USERPOS
+            face = self.getFacing()
+            x = pos[0] * 3
+            y = pos[1] * 3
+            if face is 0 : # forward
+                if self.level.getCurrentFloor().isPassable(USERPOS[0],USERPOS[1]+1): return
+                y += 3/2
+            elif face is 3 : # left
+                if self.level.getCurrentFloor().isPassable(USERPOS[0]-1,USERPOS[1]): return
+                x -= 3/2
+            elif face is 1 : # right
+                if self.level.getCurrentFloor().isPassable(USERPOS[0]+1,USERPOS[1]): return
+                x += 3/2
+            else : # back
+                if self.level.getCurrentFloor().isPassable(USERPOS[0],USERPOS[1]-1): return
+                y -= 3/2
+
+            self.setTorch(currentTorch, x, y, 3/2)
+            currentTorch = (currentTorch + 1) % 4
+
