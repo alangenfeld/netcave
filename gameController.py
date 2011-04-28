@@ -4,7 +4,7 @@ import torch
 class gameController(VRScript.Core.Behavior):
     timer = 0
     moveVec = VRScript.Math.Vector(0,0,0)
-    torches = [torch.torch(), torch.torch(), torch.torch(), torch.torch()]
+    torches = []
     DELAY = 15
     MOVEAMOUNT = 3.0/DELAY
     USERPOS = [0,0]
@@ -16,12 +16,14 @@ class gameController(VRScript.Core.Behavior):
     def OnInit(self,info):
         self.USER = VRScript.Core.Entity('User0')
         self.WAND = VRScript.Core.Entity('User0Hand')
-        self.torches[0].setID(0)
-        self.torches[1].setID(1)
-        self.torches[2].setID(2)
-        self.torches[3].setID(3)
+        for x in range(4):
+            self.torches+=[torch.torch()]
+            self.torches[x].setID(x)
+        self.currentTorch = 0
+        self.waitTorch = 0
     
     def setTorch(self, ID, x, y, z) :
+        print(ID)
         self.torches[ID].setPos(x, y, z)
         # set light
 
@@ -108,6 +110,7 @@ class gameController(VRScript.Core.Behavior):
         movedir = -1
         facedir = self.getFacing()
         if not joystick:
+            self.devButton()
             if button[0] and button[2]:
                 movedir = 0
             elif button[1] and button[2]:
@@ -171,6 +174,7 @@ class gameController(VRScript.Core.Behavior):
         #print(str(self.USER.movable().getPose().getTranslation().x)+","+str(self.USER.movable().getPose().getTranslation().y))    
         if self.timer > 0:
             if self.timer == int(self.DELAY/2)+1:
+                
                 #print(self.level.getCurrentFloor().dungeon[self.USERPOS[1]][self.USERPOS[0]])
                 if self.level.getCurrentFloor().dungeon[self.USERPOS[1]][self.USERPOS[0]]==7:
                     if self.level.canGoUp():
@@ -179,6 +183,7 @@ class gameController(VRScript.Core.Behavior):
                         self.moveVec = self.level.getCurrentFloor().move2Spawn(self.USER,self.MOVEAMOUNT, int(self.DELAY/2) * self.MOVEAMOUNT ,down=False)
                         self.showHide([self.USERPOS[0]-self.CLIP,self.USERPOS[0]+self.CLIP],[self.USERPOS[1]-self.CLIP,self.USERPOS[1]+self.CLIP],True)
                         self.setUserPosition(self.level.getCurrentFloor().end)
+                        
                 elif self.level.getCurrentFloor().dungeon[self.USERPOS[1]][self.USERPOS[0]]==8:
                     if self.level.canGoDown():
                         print('going down')
@@ -191,35 +196,68 @@ class gameController(VRScript.Core.Behavior):
             else:
                 self.USER.physical('').applyImpulse(self.moveVec,VRScript.Math.Vector(0,0,0))
             self.timer -= 1 
+            
         if self.timer == 0:
             self.moveUser()
+            
         pos = self.USER.movable().getPose().getTranslation()
+        
         for x in range(len(self.torches)):
             torch = self.torches[x]
             self.level.setLight( x, ( torch.x-pos.x, torch.z-pos.z, -torch.y+pos.y, 1 ) )
+            #print(str(x)+' '+str(( torch.x-pos.x, torch.z-pos.z, -torch.y+pos.y, 1 )))
         self.level.updateLights()
+        
+        if self.waitTorch>0:
+            self.waitTorch-=1
         #self.level.setLight( 1, ( 0, 0, -9, 1 ) )
 
     def OnButtonPress(self, cbInfo, btnInfo, intInfo):
         print(str(btnInfo.button))
-        if (btnInfo.button == 4):
+        if (btnInfo.button == 4 and self.timer==0 and self.waitTorch==0):
             pos = self.USERPOS
             face = self.getFacing()
             x = pos[0] * 3
             y = pos[1] * 3
             if face is 0 : # forward
-                if self.level.getCurrentFloor().isPassable(USERPOS[0],USERPOS[1]+1): return
+                if self.level.getCurrentFloor().isPassable(pos[0],pos[1]+1): return
                 y += 3/2
             elif face is 3 : # left
-                if self.level.getCurrentFloor().isPassable(USERPOS[0]-1,USERPOS[1]): return
+                if self.level.getCurrentFloor().isPassable(pos[0]-1,pos[1]): return
                 x -= 3/2
             elif face is 1 : # right
-                if self.level.getCurrentFloor().isPassable(USERPOS[0]+1,USERPOS[1]): return
+                if self.level.getCurrentFloor().isPassable(pos[0]+1,pos[1]): return
                 x += 3/2
             else : # back
-                if self.level.getCurrentFloor().isPassable(USERPOS[0],USERPOS[1]-1): return
+                if self.level.getCurrentFloor().isPassable(pos[0],pos[1]-1): return
                 y -= 3/2
 
-            self.setTorch(currentTorch, x, y, 3/2)
-            currentTorch = (currentTorch + 1) % 4
+            self.setTorch(self.currentTorch, x, y, 3/2)
+            self.currentTorch = (self.currentTorch + 1) % 4
+            self.waitTorch = 5
+            
+    def devButton(self):
+        button =  VRScript.Util.getControllerState(0)['button']
+        if (button[0] and button[1] and self.waitTorch==0):
+            print('placing '+str(self.currentTorch))
+            pos = self.USERPOS
+            face = self.getFacing()
+            x = pos[0] * 3
+            y = pos[1] * 3
+            if face is 0 : # forward
+                if self.level.getCurrentFloor().isPassable(pos[0],pos[1]+1): return
+                y += 3/2
+            elif face is 3 : # left
+                if self.level.getCurrentFloor().isPassable(pos[0]-1,pos[1]): return
+                x -= 3/2
+            elif face is 1 : # right
+                if self.level.getCurrentFloor().isPassable(pos[0]+1,pos[1]): return
+                x += 3/2
+            else : # back
+                if self.level.getCurrentFloor().isPassable(pos[0],pos[1]-1): return
+                y -= 3/2
+
+            self.setTorch(self.currentTorch, x, y, 3/2)
+            self.currentTorch = (self.currentTorch + 1) % 4
+            self.waitTorch = 5
 
