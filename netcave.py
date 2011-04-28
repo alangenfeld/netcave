@@ -49,7 +49,6 @@ for light in range( 4 ):
 
 gc = gameController()
 gc.setLevel(LEVEL)
-gc.setDevelop(DEVELOP)
 
 start = LEVEL.getFloor(0).start
 gc.setUserPosition(start)

@@ -7,7 +7,6 @@ class gameController(VRScript.Core.Behavior):
     DELAY = 15
     MOVEAMOUNT = 3.0/DELAY
     USERPOS = [0,0]
-    DEVELOP = False
     CLIP = 8
     
     def init(self, entity=None):
@@ -26,26 +25,24 @@ class gameController(VRScript.Core.Behavior):
     def setLevel(self,level):
         self.level = level
         
-    def setDevelop(self,devel):
-        self.DEVELOP = devel
-        
     def setUserPosition(self,pos):
         self.USERPOS[0] = pos[0]
         self.USERPOS[1] = pos[1]
-        wallmap = self.level.getFloor(0).wallmap
+        wallmap = self.level.getCurrentFloor().wallmap
         self.showHide([pos[0]-self.CLIP,pos[0]+self.CLIP],[pos[1]-self.CLIP,pos[1]+self.CLIP],True)
                         
     def showHide(self,xrng, yrng, sh):
-        wallmap = self.level.getCurrentFloor().wallmap
-        for x in range(xrng[0],xrng[1]+1):
-            for y in range(yrng[0],yrng[1]+1):
-                loc = '[' + str(y) + '][' + str(x) + ']'
-                if loc in wallmap.keys():
-                    for wall in wallmap[loc]:
-                        if sh:
-                            wall.renderable('').show()
-                        else:
-                            wall.renderable('').hide()
+        pass
+        #wallmap = self.level.getCurrentFloor().wallmap
+        #for x in range(xrng[0],xrng[1]+1):
+            #for y in range(yrng[0],yrng[1]+1):
+                #loc = '[' + str(y) + '][' + str(x) + ']'
+                #if loc in wallmap.keys():
+                    #for wall in wallmap[loc]:
+                        #if sh:
+                            #wall.renderable('').show()
+                        #else:
+                            #wall.renderable('').hide()
                             
     def foreward(self):
         self.moveVec = VRScript.Math.Vector(0,self.MOVEAMOUNT,0)
@@ -107,34 +104,34 @@ class gameController(VRScript.Core.Behavior):
         #print(repr(USER.movable().getPose().x.w)+","+repr(USER.movable().getPose().y.w))
         movedir = -1
         facedir = self.getFacing()
-        if self.DEVELOP or not joystick:
-            if button[0] and button[2] and self.level.getCurrentFloor().isPassable(USERPOS[0],USERPOS[1]+1):
+        if not joystick:
+            if button[0] and button[2]:
                 movedir = 0
-            elif button[1] and button[2] and self.level.getCurrentFloor().isPassable(USERPOS[0],USERPOS[1]-1):
+            elif button[1] and button[2]:
                 movedir = 2
-            elif button[0] and not(button[2]) and self.level.getCurrentFloor().isPassable(USERPOS[0]-1,USERPOS[1]):
+            elif button[0] and not(button[2]):
                 movedir = 3
-            elif button[1] and not(button[2]) and self.level.getCurrentFloor().isPassable(USERPOS[0]+1,USERPOS[1]):
+            elif button[1] and not(button[2]):
                 movedir = 1
         else:
-            if joystick[1] > 0.8  and self.level.getCurrentFloor().isPassable(USERPOS[0],USERPOS[1]+1):
+            if joystick[1] > 0.8:
                 movedir = 0
-            elif joystick[1] < -0.8 and self.level.getCurrentFloor().isPassable(USERPOS[0],USERPOS[1]-1):
+            elif joystick[1] < -0.8:
                 movedir = 2
-            elif joystick[0] < -0.8 and self.level.getCurrentFloor().isPassable(USERPOS[0]-1,USERPOS[1]):
+            elif joystick[0] < -0.8:
                 movedir = 3
-            elif joystick[0] > 0.8 and self.level.getCurrentFloor().isPassable(USERPOS[0]+1,USERPOS[1]):
+            elif joystick[0] > 0.8:
                 movedir = 1
         
         if movedir>=0:
             #print(str(USER.movable().getPose().getTranslation().x)+","+str(USER.movable().getPose().getTranslation().y))
-            if (movedir+facedir)%4 == 0:
+            if (movedir+facedir)%4 == 0  and self.level.getCurrentFloor().isPassable(USERPOS[0],USERPOS[1]+1):
                 self.foreward()
-            elif (movedir+facedir)%4 == 1:
+            elif (movedir+facedir)%4 == 1 and self.level.getCurrentFloor().isPassable(USERPOS[0]+1,USERPOS[1]):
                 self.right()
-            elif (movedir+facedir)%4 == 2:
+            elif (movedir+facedir)%4 == 2 and self.level.getCurrentFloor().isPassable(USERPOS[0],USERPOS[1]-1):
                 self.backward()
-            elif (movedir+facedir)%4 == 3:
+            elif (movedir+facedir)%4 == 3 and self.level.getCurrentFloor().isPassable(USERPOS[0]-1,USERPOS[1]):
                 self.left()
             print('\n'+self.getMiniMap(11))
             print(USER.movable().getPose().getTranslation().x,USER.movable().getPose().getTranslation().y)

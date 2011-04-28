@@ -226,7 +226,7 @@ class floor():
         #print(str((x*self.CAVE) + offset[0])+","+str((y*self.CAVE) + offset[1]))
         wall_m = VRScript.Resources.Mesh(name, typing+'.osg')
         wall_e.attach(VRScript.Core.Renderable(name,wall_m))
-        wall_e.renderable('').hide()
+        wall_e.renderable('').show()
         if loc in self.wallmap.keys():
             self.wallmap[loc] += [wall_e]
         else:
