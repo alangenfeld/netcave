@@ -46,7 +46,7 @@ class gameController(VRScript.Core.Behavior):
                             wall.renderable('').show()
                         else:
                             wall.renderable('').hide()
-        
+                            
     def foreward(self):
         self.moveVec = VRScript.Math.Vector(0,self.MOVEAMOUNT,0)
         self.timer=self.DELAY
@@ -96,49 +96,49 @@ class gameController(VRScript.Core.Behavior):
             return 1
         else:
             return 2
-        
+            
     def moveUser(self):
-            USER = self.USER
-            
-            USERPOS = self.USERPOS
-            button =  VRScript.Util.getControllerState(0)['button']
-            joystick = VRScript.Util.getControllerState(0)['joystickAxis']
-            
-            #print(repr(USER.movable().getPose().x.w)+","+repr(USER.movable().getPose().y.w))
-            movedir = -1
-            facedir = self.getFacing()
-            if self.DEVELOP or not joystick:
-                if button[0] and button[2] and self.level.getCurrentFloor().isPassable(USERPOS[0],USERPOS[1]+1):
-                    movedir = 0
-                elif button[1] and button[2] and self.level.getCurrentFloor().isPassable(USERPOS[0],USERPOS[1]-1):
-                    movedir = 2
-                elif button[0] and not(button[2]) and self.level.getCurrentFloor().isPassable(USERPOS[0]-1,USERPOS[1]):
-                    movedir = 3
-                elif button[1] and not(button[2]) and self.level.getCurrentFloor().isPassable(USERPOS[0]+1,USERPOS[1]):
-                    movedir = 1
-            else:
-                if joystick[1] > 0.8  and self.level.getCurrentFloor().isPassable(USERPOS[0],USERPOS[1]+1):
-                    movedir = 0
-                elif joystick[1] < -0.8 and self.level.getCurrentFloor().isPassable(USERPOS[0],USERPOS[1]-1):
-                    movedir = 2
-                elif joystick[0] < -0.8 and self.level.getCurrentFloor().isPassable(USERPOS[0]-1,USERPOS[1]):
-                    movedir = 3
-                elif joystick[0] > 0.8 and self.level.getCurrentFloor().isPassable(USERPOS[0]+1,USERPOS[1]):
-                    movedir = 1
-            
-            if movedir>=0:
-                #print(str(USER.movable().getPose().getTranslation().x)+","+str(USER.movable().getPose().getTranslation().y))
-                if (movedir+facedir)%4 == 0:
-                    self.foreward()
-                elif (movedir+facedir)%4 == 1:
-                    self.right()
-                elif (movedir+facedir)%4 == 2:
-                    self.backward()
-                elif (movedir+facedir)%4 == 3:
-                    self.left()
-                print('\n'+self.getMiniMap(11))
-                print(USER.movable().getPose().getTranslation().x,USER.movable().getPose().getTranslation().y)
-                    
+        USER = self.USER
+        
+        USERPOS = self.USERPOS
+        button =  VRScript.Util.getControllerState(0)['button']
+        joystick = VRScript.Util.getControllerState(0)['joystickAxis']
+        
+        #print(repr(USER.movable().getPose().x.w)+","+repr(USER.movable().getPose().y.w))
+        movedir = -1
+        facedir = self.getFacing()
+        if self.DEVELOP or not joystick:
+            if button[0] and button[2] and self.level.getCurrentFloor().isPassable(USERPOS[0],USERPOS[1]+1):
+                movedir = 0
+            elif button[1] and button[2] and self.level.getCurrentFloor().isPassable(USERPOS[0],USERPOS[1]-1):
+                movedir = 2
+            elif button[0] and not(button[2]) and self.level.getCurrentFloor().isPassable(USERPOS[0]-1,USERPOS[1]):
+                movedir = 3
+            elif button[1] and not(button[2]) and self.level.getCurrentFloor().isPassable(USERPOS[0]+1,USERPOS[1]):
+                movedir = 1
+        else:
+            if joystick[1] > 0.8  and self.level.getCurrentFloor().isPassable(USERPOS[0],USERPOS[1]+1):
+                movedir = 0
+            elif joystick[1] < -0.8 and self.level.getCurrentFloor().isPassable(USERPOS[0],USERPOS[1]-1):
+                movedir = 2
+            elif joystick[0] < -0.8 and self.level.getCurrentFloor().isPassable(USERPOS[0]-1,USERPOS[1]):
+                movedir = 3
+            elif joystick[0] > 0.8 and self.level.getCurrentFloor().isPassable(USERPOS[0]+1,USERPOS[1]):
+                movedir = 1
+        
+        if movedir>=0:
+            #print(str(USER.movable().getPose().getTranslation().x)+","+str(USER.movable().getPose().getTranslation().y))
+            if (movedir+facedir)%4 == 0:
+                self.foreward()
+            elif (movedir+facedir)%4 == 1:
+                self.right()
+            elif (movedir+facedir)%4 == 2:
+                self.backward()
+            elif (movedir+facedir)%4 == 3:
+                self.left()
+            print('\n'+self.getMiniMap(11))
+            print(USER.movable().getPose().getTranslation().x,USER.movable().getPose().getTranslation().y)
+
     def getMiniMap(self, size):
         USERPOS = self.USERPOS
         mini = ""
@@ -166,7 +166,7 @@ class gameController(VRScript.Core.Behavior):
                     narg+='#'
             mini += narg + '\n'
         return mini[:-1]
-                
+        
     def OnUpdate(self,info):
         #print(str(self.USER.movable().getPose().getTranslation().x)+","+str(self.USER.movable().getPose().getTranslation().y))    
         if self.timer > 0:
@@ -193,3 +193,5 @@ class gameController(VRScript.Core.Behavior):
             self.timer -= 1 
         if self.timer == 0:
             self.moveUser()
+        self.level.setLight( 0, ( 0, 0, 0, 1 ) )
+        #self.level.setLight( 1, ( 0, 0, -9, 1 ) )
