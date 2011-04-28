@@ -14,12 +14,45 @@ class floor():
     def __init__(self, depth, CAVE=3):
         self.depth = depth
         self.CAVE = CAVE
+        
+        self.wallList = []
+        self.top_entity = VRScript.Core.Entity("DLEVEL")
+        m = VRScript.Resources.Mesh('DLEVEL_m', 'floor.osg')
+        self.top_entity.attach(VRScript.Core.Renderable("DLEVEL_f", m))
+        
+        self.level_material = VRScript.Core.MaterialProperties()
+        
         self.dungeon = stupidDungeon.getDungeon(os.path.join('DungeonLibrary','L'+repr(depth),repr(int(random.random()*5))))
         self.findSpawns()
         self.genWalls()
         self.generateMobs()
         self.generateItems()
-
+        
+        self.setLight( 0, (0, 0, 0) )
+        self.setLight( 1, (0, 0, 0) )
+        self.setLight( 2, (0, 0, 0) )
+        self.setLight( 3, (0, 0, 0) )
+        
+    def setLight( self, light, position ):
+        if light not in ( 0, 1, 2, 3):
+            return
+            
+        pos = VRScript.Core.Color( *position )
+        
+        if light == 0:
+            self.level_material.ambientColor = pos
+        elif light == 1:
+            self.level_material.diffuseColor = pos
+        elif light == 2:
+            self.level_material.specularColor = pos
+        elif light == 3:
+            self.level_material.emissiveColor = pos
+        
+        
+        #self.top_entity.renderable().setMaterialProperties( self.level_material )
+        for e in self.wallList:
+            e.renderable().setMaterialProperties( self.level_material )
+        
         
     def getBlock(self, x, y):
         return self.dungeon[y][x]
@@ -75,25 +108,25 @@ class floor():
     def genWalls(self):
         offset = [self.depth*96,self.depth*96]
         self.offset = offset
-        entityList = []
+        
         for y in range(len(self.dungeon)) :
             for x in range(len(self.dungeon[y])) :
                 if self.dungeon[y][x] == 0 or  self.dungeon[y][x]>=3:
-                    entityList  += [self.makeEntity('Floor',x,y,0,offset)]
+                    self.wallList  += [self.makeEntity('Floor',x,y,0,offset)]
                     
-                    entityList  += [self.makeEntity('Cieling',x,y,0,offset)]
+                    self.wallList  += [self.makeEntity('Cieling',x,y,0,offset)]
                     
                     if self.dungeon[y-1][x]==1 or self.dungeon[y-1][x]==2:
-                        entityList  += [self.makeEntity('RightWall',x,y,0,offset)]
+                        self.wallList  += [self.makeEntity('RightWall',x,y,0,offset)]
                         
                     if self.dungeon[y+1][x]==1 or self.dungeon[y+1][x]==2:
-                        entityList  += [self.makeEntity('LeftWall',x,y,0,offset)]
+                        self.wallList  += [self.makeEntity('LeftWall',x,y,0,offset)]
                         
                     if self.dungeon[y][x+1]==1 or self.dungeon[y][x+1]==2:
-                        entityList  += [self.makeEntity('FrontWall',x,y,0,offset)]
+                        self.wallList  += [self.makeEntity('FrontWall',x,y,0,offset)]
                         
                     if self.dungeon[y][x-1]==1 or self.dungeon[y][x-1]==2:
-                        entityList  += [self.makeEntity('BackWall',x,y,0,offset)]
+                        self.wallList  += [self.makeEntity('BackWall',x,y,0,offset)]
     
     def makeEntity(self,typing,x,y,z,offset):
         loc = '[' + str(y) + '][' + str(x) + ']'
@@ -121,6 +154,8 @@ class floor():
         #phys.setCollisionType(VRScript.Core.CollisionType.Static)
         #wall_e.attach(phys)
             
+        wall_e.movable().setParent( self.top_entity )
+            
         return wall_e
     
 class level():
@@ -136,3 +171,6 @@ class level():
         
     def getCurrentFloor(self):
         return self.floors[self.currentFloor]
+        
+    def setLight( self, light, pos ):
+        self.floors[self.currentFloor].setLight( light, pos )

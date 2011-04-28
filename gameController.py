@@ -172,3 +172,14 @@ class gameController(VRScript.Core.Behavior):
             self.timer -= 1 
         if self.timer == 0:
             self.moveUser()
+        loc = self.USER.movable().selfToWorld().getTranslation()
+        loc = self.USER.movable().selfToWorld().inverse().transform( loc )
+        
+        
+        self.level.setLight( 0, ( 0, 0, 0, 1 ) )
+        self.level.setLight( 1, ( 0, 0, -9, 1 ) )
+        #print( "User Real: %d %d %d %d" % ( loc.x, loc.y, loc.z, 1 ) )
+        #print( "User Cave: %d %d %d" % ( self.USERPOS[0], self.USERPOS[1], 0 ) )
+        #print( self.USER.movable().selfToWorld() )
+        #print( self.USER.movable().selfToWorld().inverse() )
+        print( "------------" )
