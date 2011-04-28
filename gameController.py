@@ -193,7 +193,11 @@ class gameController(VRScript.Core.Behavior):
             self.timer -= 1 
         if self.timer == 0:
             self.moveUser()
-        self.level.setLight( 0, ( 0, 0, 0, 1 ) )
+        pos = self.USER.movable().getPose().getTranslation()
+        for x in range(len(self.torches)):
+            torch = self.torches[x]
+            self.level.setLight( x, ( torch.x-pos.x, torch.z-pos.z, -torch.y+pos.y, 1 ) )
+        self.level.updateLights()
         #self.level.setLight( 1, ( 0, 0, -9, 1 ) )
 
     def OnButtonPress(self, cbInfo, btnInfo, intInfo):

@@ -40,25 +40,14 @@ class floor():
         self.generateMobs()
         self.generateItems()
         
-        self.setLight( 0, (0, 0, 0, 1) )
-        self.setLight( 1, (0, 0, 0, 1) )
-        self.setLight( 2, (0, 0, 0, 1) )
-        self.setLight( 3, (0, 0, 0, 1) )
+        self.setLight( [(0, 0, 0, 1), (0, 0, 0, 1), (0, 0, 0, 1), (0, 0, 0, 1)] )
         
-    def setLight( self, light, position ):
-        if light not in ( 0, 1, 2, 3):
-            return
+    def setLight( self, lights ):
             
-        pos = VRScript.Core.Color( *position )
-        
-        if light == 0:
-            self.level_material.ambientColor = pos
-        elif light == 1:
-            self.level_material.diffuseColor = pos
-        elif light == 2:
-            self.level_material.specularColor = pos
-        elif light == 3:
-            self.level_material.emissiveColor = pos
+        self.level_material.ambientColor = VRScript.Core.Color( *lights[0] )
+        self.level_material.diffuseColor = VRScript.Core.Color( *lights[1] )
+        self.level_material.specularColor = VRScript.Core.Color( *lights[2] )
+        self.level_material.emissiveColor = VRScript.Core.Color( *lights[3] )
         
         
         #self.top_entity.renderable().setMaterialProperties( self.level_material )
@@ -247,6 +236,7 @@ class floor():
 class level():
     floors = []
     currentFloor = 0
+    lights = [(),(),(),()]
     
     def __init__(self):
         for d in range(0,1):
@@ -275,5 +265,8 @@ class level():
         return self.floors[self.currentFloor]
         
     def setLight( self, light, pos ):
-        self.floors[self.currentFloor].setLight( light, pos )
+        self.lights[light] = pos
+        
+    def updateLights(self):
+        self.floors[self.currentFloor].setLight( self.lights )
      
