@@ -30,7 +30,8 @@ class gameController(VRScript.Core.Behavior):
         self.DEVELOP = devel
         
     def setUserPosition(self,pos):
-        self.USERPOS = pos
+        self.USERPOS[0] = pos[0]
+        self.USERPOS[1] = pos[1]
         wallmap = self.level.getFloor(0).wallmap
         self.showHide([pos[0]-self.CLIP,pos[0]+self.CLIP],[pos[1]-self.CLIP,pos[1]+self.CLIP],True)
                         
@@ -135,14 +136,15 @@ class gameController(VRScript.Core.Behavior):
                     self.backward()
                 elif (movedir+facedir)%4 == 3:
                     self.left()
-                print('\n'+self.getMiniMap())
+                print('\n'+self.getMiniMap(11))
+                print(USER.movable().getPose().getTranslation().x,USER.movable().getPose().getTranslation().y)
                     
-    def getMiniMap(self):
+    def getMiniMap(self, size):
         USERPOS = self.USERPOS
         mini = ""
-        for y in range(USERPOS[1]+4,USERPOS[1]-5,-1):
+        for y in range(USERPOS[1]+size,USERPOS[1]-size-1,-1):
             narg = ""
-            for x in range(USERPOS[0]-4,USERPOS[0]+5):
+            for x in range(USERPOS[0]-size,USERPOS[0]+size+1):
                 if x>=0 and x<64 and y>=0 and y<64:
                     if x==USERPOS[0] and y==USERPOS[1]:
                         narg+='X'
@@ -163,12 +165,31 @@ class gameController(VRScript.Core.Behavior):
                 else:
                     narg+='#'
             mini += narg + '\n'
-        return mini
+        return mini[:-1]
                 
     def OnUpdate(self,info):
         #print(str(self.USER.movable().getPose().getTranslation().x)+","+str(self.USER.movable().getPose().getTranslation().y))    
         if self.timer > 0:
-            self.USER.physical('').applyImpulse(self.moveVec,VRScript.Math.Vector(0,0,0))
+            if self.timer == int(self.DELAY/2)+1:
+                #print(self.level.getCurrentFloor().dungeon[self.USERPOS[1]][self.USERPOS[0]])
+                if self.level.getCurrentFloor().dungeon[self.USERPOS[1]][self.USERPOS[0]]==7:
+                    if self.level.canGoUp():
+                        print('going up')
+                        self.level.goUp()
+                        self.moveVec = self.level.getCurrentFloor().move2Spawn(self.USER,self.MOVEAMOUNT, int(self.DELAY/2) * self.MOVEAMOUNT ,down=False)
+                        self.showHide([self.USERPOS[0]-self.CLIP,self.USERPOS[0]+self.CLIP],[self.USERPOS[1]-self.CLIP,self.USERPOS[1]+self.CLIP],True)
+                        self.setUserPosition(self.level.getCurrentFloor().end)
+                elif self.level.getCurrentFloor().dungeon[self.USERPOS[1]][self.USERPOS[0]]==8:
+                    if self.level.canGoDown():
+                        print('going down')
+                        self.level.goDown()
+                        self.moveVec = self.level.getCurrentFloor().move2Spawn(self.USER,self.MOVEAMOUNT, int(self.DELAY/2) * self.MOVEAMOUNT)
+                        self.showHide([self.USERPOS[0]-self.CLIP,self.USERPOS[0]+self.CLIP],[self.USERPOS[1]-self.CLIP,self.USERPOS[1]+self.CLIP],True)
+                        self.setUserPosition(self.level.getCurrentFloor().start)
+                else:
+                    self.USER.physical('').applyImpulse(self.moveVec,VRScript.Math.Vector(0,0,0))
+            else:
+                self.USER.physical('').applyImpulse(self.moveVec,VRScript.Math.Vector(0,0,0))
             self.timer -= 1 
         if self.timer == 0:
             self.moveUser()
