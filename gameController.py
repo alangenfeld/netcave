@@ -21,6 +21,21 @@ class gameController(VRScript.Core.Behavior):
             self.torches[x].setID(x)
         self.currentTorch = 0
         self.waitTorch = 0
+
+        # Minimap stuff
+
+        m = VRScript.Math.Matrix()
+        m = m.postScale( VRScript.Math.Vector( .5, .5, .5 ))
+        m = m.postTranslation( VRScript.Math.Vector( 0, -2, .5 ))
+        m = m.postAxisAngle( 180, VRScript.Math.Vector(0,0,1) )
+        m = m.postAxisAngle( 180, VRScript.Math.Vector(0,1,0,) )
+        m = m.postAxisAngle( 90, VRScript.Math.Vector(1,0,0,) )
+ 
+        self.minimap = VRScript.Core.FontText( "MiniMap", "", "VeraMono.ttf", m )
+        self.minimap.setColor(VRScript.Core.Color( 1,1, 1,1))
+        self.USER.attach( self.minimap )
+        self.minimap.show()
+        
     
     def setTorch(self, ID, x, y, z) :
         print(ID)
@@ -139,7 +154,9 @@ class gameController(VRScript.Core.Behavior):
                 self.backward()
             elif (movedir+facedir)%4 == 3 and self.level.getCurrentFloor().isPassable(USERPOS[0]-1,USERPOS[1]):
                 self.left()
-            print('\n'+self.getMiniMap(11))
+
+                
+            self.minimap.setText( self.getMiniMap(11))
             print(USER.movable().getPose().getTranslation().x,USER.movable().getPose().getTranslation().y)
 
     def getMiniMap(self, size):
@@ -246,18 +263,22 @@ class gameController(VRScript.Core.Behavior):
             y = pos[1] * 3
             if face is 0 : # forward
                 if self.level.getCurrentFloor().isPassable(pos[0],pos[1]+1): return
-                y += 3/2
+                #y += 3.0/2
             elif face is 3 : # left
                 if self.level.getCurrentFloor().isPassable(pos[0]-1,pos[1]): return
-                x -= 3/2
+                #x -= 3.0/2
             elif face is 1 : # right
                 if self.level.getCurrentFloor().isPassable(pos[0]+1,pos[1]): return
-                x += 3/2
+                #x += 3.0/2
             else : # back
                 if self.level.getCurrentFloor().isPassable(pos[0],pos[1]-1): return
-                y -= 3/2
+                #y -= 3.0/2
 
-            self.setTorch(self.currentTorch, x, y, 3/2)
+            self.setTorch(self.currentTorch, x, y, 3.0/2)
             self.currentTorch = (self.currentTorch + 1) % 4
             self.waitTorch = 5
+
+            user = self.USER.movable().getPose().getTranslation()
+            print( "User: %f %f %f" % (user.x, user.y, user.z))
+            print( "Light: %f %f %f" % (x, y, 3.0/2 ))
 
