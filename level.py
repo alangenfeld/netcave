@@ -22,6 +22,8 @@ class floor():
     wallmap = {}
     start = []
     end = []
+    light_radius_mean = .5
+    light_radius_dev = .1
     
     def __init__(self, depth, CAVE=3):
         self.depth = depth
@@ -43,11 +45,30 @@ class floor():
         self.setLight( [(0, 0, 0, 1), (0, 0, 0, 1), (0, 0, 0, 1), (0, 0, 0, 1)] )
         
     def setLight( self, lights ):
-            
-        self.level_material.ambientColor = VRScript.Core.Color( *lights[0] )
-        self.level_material.diffuseColor = VRScript.Core.Color( *lights[1] )
-        self.level_material.specularColor = VRScript.Core.Color( *lights[2] )
-        self.level_material.emissiveColor = VRScript.Core.Color( *lights[3] )
+
+        
+        #flicker = random.gauss(self.light_radius_mean,self.light_radius_dev) 
+        flicker = 1
+
+        self.level_material.ambientColor = VRScript.Core.Color( lights[0][0],
+                                                                lights[0][1],
+                                                                lights[0][2],
+                                                                flicker)
+                                                                
+        self.level_material.diffuseColor = VRScript.Core.Color( lights[1][0],
+                                                                lights[1][1],
+                                                                lights[1][2],
+                                                                flicker)
+                                                                
+        self.level_material.specularColor = VRScript.Core.Color( lights[2][0],
+                                                                 lights[2][1],
+                                                                 lights[2][2],
+                                                                 flicker)
+                                                                
+        self.level_material.emissiveColor = VRScript.Core.Color( lights[3][0],
+                                                                  lights[3][1],
+                                                                  lights[3][2],
+                                                                  flicker)
         
         
         #self.top_entity.renderable().setMaterialProperties( self.level_material )
