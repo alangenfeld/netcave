@@ -109,8 +109,8 @@ class gameController(VRScript.Core.Behavior):
         #print(repr(USER.movable().getPose().x.w)+","+repr(USER.movable().getPose().y.w))
         movedir = -1
         facedir = self.getFacing()
+        self.devButton()
         if not joystick:
-            self.devButton()
             if button[0] and button[2]:
                 movedir = 0
             elif button[1] and button[2]:

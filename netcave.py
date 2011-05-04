@@ -1,5 +1,5 @@
 import VRScript
-import stupidDungeon, level
+import stupidDungeon, level, random
 from gameController import gameController
 #import Weapon
 
@@ -8,7 +8,7 @@ WIDTH = 64
 HEIGHT = 64
 DEVELOP = True
 
-
+random.seed(545657451)
 LEVEL = level.level()
 dungeon = LEVEL.getFloor(0).dungeon
     
