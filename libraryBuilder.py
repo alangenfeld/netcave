@@ -2,7 +2,7 @@ from pyDungeon import *
 import sys, numpy, pickle, os, shutil
 
 ROOMS = 50
-SIZE = 64
+SIZE = 32
 
 if __name__=="__main__":
 

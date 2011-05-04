@@ -4,8 +4,8 @@ from gameController import gameController
 #import Weapon
 
 CAVE = 3
-WIDTH = 64
-HEIGHT = 64
+WIDTH = 32
+HEIGHT = 32
 DEVELOP = True
 
 random.seed(545657451)

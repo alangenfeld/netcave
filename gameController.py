@@ -165,7 +165,7 @@ class gameController(VRScript.Core.Behavior):
         for y in range(USERPOS[1]+size,USERPOS[1]-size-1,-1):
             narg = ""
             for x in range(USERPOS[0]-size,USERPOS[0]+size+1):
-                if x>=0 and x<64 and y>=0 and y<64:
+                if x>=0 and x<len(self.level.getCurrentFloor().dungeon) and y>=0 and y<len(self.level.getCurrentFloor().dungeon[0]):
                     if x==USERPOS[0] and y==USERPOS[1]:
                         narg+='X'
                     else:
@@ -190,6 +190,9 @@ class gameController(VRScript.Core.Behavior):
     def OnUpdate(self,info):
         #print(str(self.USER.movable().getPose().getTranslation().x)+","+str(self.USER.movable().getPose().getTranslation().y))    
         if self.timer > 0:
+            if self.timer == 1 and len(self.level.getCurrentFloor().mobs)==0:
+                self.level.getCurrentFloor().generateMobs(self.USERPOS)
+                
             if self.timer == int(self.DELAY/2)+1:
                 
                 #print(self.level.getCurrentFloor().dungeon[self.USERPOS[1]][self.USERPOS[0]])

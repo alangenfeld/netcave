@@ -37,9 +37,8 @@ class floor():
         self.level_material = VRScript.Core.MaterialProperties()
         
         self.dungeon = stupidDungeon.getDungeon(os.path.join('DungeonLibrary','L'+repr(depth),repr(int(random.random()*5))))
-        self.findSpawns()
         self.genWalls()
-        self.generateMobs()
+        self.findSpawns()
         self.generateItems()
         
         self.setLight( [(0, 0, 0, 1), (0, 0, 0, 1), (0, 0, 0, 1), (0, 0, 0, 1)] )
@@ -87,29 +86,36 @@ class floor():
 
         return passable
         
-    def generateMobs(self):
-        spawnPLocs = []
-        spawnLocs = []
-        for y in range(len(self.dungeon)) :
-            for x in range(len(self.dungeon[y])) :
-                if self.dungeon[y][x] == 0 : 
-                    spawnPLocs +=[[x,y]]
-        minM = 10+self.depth
-        maxM = minM+6+self.depth
-        rm = int(random.random()*(maxM-minM)+minM)
-        while(len(spawnLocs)<rm):
-            consider = spawnPLocs[int(random.random()*len(spawnPLocs))]
-            if consider in spawnLocs:
-                continue
-            if self.isPassable(y+1,x) and self.isPassable(y-1,x) and self.isPassable(y,x+1) and self.isPassable(y,x-1):
-                spawnLocs += consider
+    def generateMobs(self, userPosition):
+        #don't generate mobs every step or user will never get downtime
+        if random.random()<0.2:
+            spawnPLocs = []
+            spawnLocs = []
+            for y in range(userPosition[0]-9,userPosition[1]+9+1) :
+                for x in range(userPosition[1]-9,userPosition[1]+9+1) :
+                    if x>=0 and x<len(self.dungeon) and y>=0 and y<len(self.dungeon[0]):
+                        if self.dungeon[y][x] == 0 and abs(userPosition[0]-x)+abs(userPosition[1]-y)>=6: 
+                            spawnPLocs +=[[x,y]]
+
+            rm = int(random.random()*4.0)#int(random.random()*self.depth/5.0)+1
+            if rm>3:
+                rm = 2
             else:
-                if random.random()<.5:
+                rm = 1
+            while(len(spawnLocs)<rm):
+                consider = spawnPLocs[int(random.random()*len(spawnPLocs))]
+                if consider in spawnLocs:
+                    continue
+                if self.isPassable(y+1,x) and self.isPassable(y-1,x) and self.isPassable(y,x+1) and self.isPassable(y,x-1):
                     spawnLocs += consider
-           
-        print(spawnLocs)   
-        #generate mob classes
-## Enemy.spawnLoc("AntLion", "BugMove.fbx", spawnPLocs[0][0]*3, spawnPLocs[0][1]*3)                        
+                else:
+                    if random.random()<.5:
+                        spawnLocs += consider
+            
+            print(spawnLocs)   
+            #generate mob classes
+            ## Enemy.spawnLoc("AntLion", "BugMove.fbx", spawnPLocs[0][0]*3, spawnPLocs[0][1]*3)    
+            #make sure you add mobs to the mobs list, and remove them when they die
     
     def generateItems(self):
         pass
@@ -133,8 +139,8 @@ class floor():
         else:
             st = self.end
 
-        x = st[0]*self.CAVE+self.depth*96
-        y = st[1]*self.CAVE+self.depth*96
+        x = st[0]*self.CAVE+self.depth*(len(self.dungeon)+32)
+        y = st[1]*self.CAVE+self.depth*(len(self.dungeon[0])+32)
 
         j = st[0]
         k = st[1]
@@ -161,7 +167,7 @@ class floor():
         return movedir
                 
     def genWalls(self):
-        offset = [self.depth*96,self.depth*96]
+        offset = [self.depth*(len(self.dungeon)+32),self.depth*(len(self.dungeon[0])+32)]
         self.offset = offset
 
         for y in range(len(self.dungeon)) :
