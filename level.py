@@ -1,6 +1,7 @@
 import stupidDungeon,os,random
 import VRScript
-#import Enemy
+import EnemyPlayer
+import Weapon
 
 # 0 - floor
 # 1 - wall
@@ -114,7 +115,9 @@ class floor():
             
             print(spawnLocs)   
             #generate mob classes
-            ## Enemy.spawnLoc("AntLion", "BugMove.fbx", spawnPLocs[0][0]*3, spawnPLocs[0][1]*3)    
+            enemy = EnemyPlayer.Enemy()
+            print(spawnPLocs[0][0]*3, spawnPLocs[0][1]*3+6)
+            enemy.spawnLoc("AntLion", "BugMove.fbx", userPosition[0]*3, userPosition[1]*3, .02)
             #make sure you add mobs to the mobs list, and remove them when they die
     
     def generateItems(self):

@@ -1,0 +1,18 @@
+# models\Weapons\V_crowbar\crowbar_cyl
+newmtl material_0
+Kd 1.0000 1.0000 1.0000
+illum 0
+map_Kd v_crowbar_material_0.jpg
+
+# models\Weapons\V_hand\v_hand_sheet
+newmtl material_1
+Kd 1.0000 1.0000 1.0000
+illum 0
+map_Kd v_crowbar_material_1.jpg
+
+# models\Weapons\V_crowbar\head_uvw
+newmtl material_2
+Kd 1.0000 1.0000 1.0000
+illum 0
+map_Kd v_crowbar_material_2.jpg
+
