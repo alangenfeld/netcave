@@ -119,6 +119,7 @@ Geode {
                   "out vec3 v;"
                   "out vec4 lightPosition[5];"
                   "out vec2  TexCoord;"
+                  "out mat3 nmatrix;"
                   ""
                   "void main()"
                   "{"
@@ -131,6 +132,7 @@ Geode {
                   "    lightPosition[3] = gl_FrontMaterial.emission;"
                   "    lightPosition[4] = vec4(0,0,0,1);"
                   "    gl_Position = gl_ModelViewProjectionMatrix * gl_Vertex;  "
+                  "    nmatrix = gl_NormalMatrix;"
                   "}"
                   }
                   }
@@ -157,6 +159,7 @@ Geode {
                           "in vec3 v;"
                           "in vec4 lightPosition[5];"
                           "in vec2  TexCoord;"
+                          "in mat3 nmatrix;"
                           ""
                           "#define MAX_LIGHTS 5"
                           ""
@@ -170,7 +173,8 @@ Geode {
                           ""
                           "void main()"
                           "{"
-                          "vec3 N = normalize(2.0 * texture(WallNormal, TexCoord).xyz - 1.0);"
+                          "vec3 N = normalize(nmatrix*(texture(WallNormal, TexCoord).xyz*2.0-1.0));"
+                          "//vec3 N = normalize(2.0 * texture(WallNormal, TexCoord).xzy - 1.0);"
                           "vec4 finalColor = vec4(0.0, 0.0, 0.0, 0.0);"
                           "vec4 diffuse =  vec4( 1.0, 0.749, 0.0, 1.0 );"
                           "vec4 specular = vec4( 1, 1, 1, 1 );"
