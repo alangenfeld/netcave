@@ -1,5 +1,6 @@
 import VRScript
 import torch
+import EnemyPlayer
 
 class gameController(VRScript.Core.Behavior):
     timer = 0
@@ -9,18 +10,22 @@ class gameController(VRScript.Core.Behavior):
     MOVEAMOUNT = 3.0/DELAY
     USERPOS = [0,0]
     CLIP = 8
+    player = None
     
     def init(self, entity=None):
         VRScript.Core.Behavior.init(self,entity)
         
     def OnInit(self,info):
         self.USER = VRScript.Core.Entity('User0')
+        
         self.WAND = VRScript.Core.Entity('User0Hand')
         for x in range(4):
             self.torches+=[torch.torch()]
             self.torches[x].setID(x)
         self.currentTorch = 0
         self.waitTorch = 0
+        self.player = EnemyPlayer.Player("Player")
+        self.player.showHUD()
 
         # Minimap stuff
 
@@ -188,6 +193,10 @@ class gameController(VRScript.Core.Behavior):
         return mini[:-1]
         
     def OnUpdate(self,info):
+        if not (self.player == None):
+            self.player.OnUpdate("")
+        if  self.level.getCurrentFloor().mobAlive:
+            self.level.getCurrentFloor().mob.OnUpdate(info,self.player)
         #print(str(self.USER.movable().getPose().getTranslation().x)+","+str(self.USER.movable().getPose().getTranslation().y))    
         if self.timer > 0:
 #            if self.timer == 1 and len(self.level.getCurrentFloor().mobs)==0:

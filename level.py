@@ -26,6 +26,7 @@ class floor():
     end = []
     light_radius_mean = .5
     light_radius_dev = .1
+    enum=0
     
     def __init__(self, depth, CAVE=3):
         self.depth = depth
@@ -115,10 +116,11 @@ class floor():
                         spawnLocs += consider
             
             #generate mob classes
-            self.mob = EnemyPlayer.Enemy()
+            self.mob = EnemyPlayer.Enemy(str(self.depth)+"_"+str(self.enum))
             print(spawnPLocs[0][0]*3, spawnPLocs[0][1]*3+6)
             self.mob.spawnLoc("AntLion", "BugMove.fbx", spawnPLocs[0][0], spawnPLocs[0][1], .02, self)
             self.mobAlive = True
+            self.enum += 1
 
     
     def killMob(self):
