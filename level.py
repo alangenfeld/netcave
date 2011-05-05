@@ -17,7 +17,8 @@ import Weapon
 class floor():
     dungeon = []
     items = []
-    mobs = []
+    # switching to only one mob for time sake
+    mobAlive = False
     depth = -1
     CAVE = 0
     wallmap = {}
@@ -89,7 +90,7 @@ class floor():
         
     def generateMobs(self, userPosition):
         #don't generate mobs every step or user will never get downtime
-        if random.random()<0.2:
+        if random.random()<0.02 and not self.mobAlive:
             spawnPLocs = []
             spawnLocs = []
             for y in range(userPosition[0]-9,userPosition[1]+9+1) :
@@ -113,13 +114,16 @@ class floor():
                     if random.random()<.5:
                         spawnLocs += consider
             
-            print(spawnLocs)   
             #generate mob classes
-            enemy = EnemyPlayer.Enemy()
+            self.mob = EnemyPlayer.Enemy()
             print(spawnPLocs[0][0]*3, spawnPLocs[0][1]*3+6)
-            enemy.spawnLoc("AntLion", "BugMove.fbx", userPosition[0]*3, userPosition[1]*3, .02)
-            #make sure you add mobs to the mobs list, and remove them when they die
+            self.mob.spawnLoc("AntLion", "BugMove.fbx", spawnPLocs[0][0], spawnPLocs[0][1], .02, self)
+            self.mobAlive = True
+
     
+    def killMob(self):
+        self.mobAlive = False
+
     def generateItems(self):
         pass
     

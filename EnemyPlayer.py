@@ -1,4 +1,5 @@
 import VRScript
+import level
 # ------------------------ Player ------------------------ #
 
 healthWarn_1 = VRScript.Core.Audible('healthWarn_1', 'Sound Effects/warning/fvox/health_dropping.wav')
@@ -87,9 +88,11 @@ Antlion_Angry = VRScript.Core.Audible('Ant_Angry', 'Sound Effects/antlion_guard/
 Antlion_Attack = VRScript.Core.Audible('Ant_Attack', 'Sound Effects/antlion/attack_single1.wav')
 
 class Enemy(VRScript.Core.Behavior):
+	pos = [0,0]
+
         def __init__(self, entity=None):
                 VRScript.Core.Behavior.__init__(self,entity)
-                self.hit = False
+
                 
         def load(self, filename, size):
                 self.filename = filename
@@ -105,70 +108,51 @@ class Enemy(VRScript.Core.Behavior):
                 self.renderable('').show()
                 self.attach(VRScript.Core.Animable(self.getName(), self.mesh))
 
-                self.onHit = False
                 self.state = 0  # State of the enemy: 0 for idle, 1 for alert, 2 for attack, 3 for under attack, 4 for dying
                 self.type = "enemy"
 
-##                enemyPhysProps = VRScript.Core.PhysicsProperties(0, 0.4, 0.3, 0.3, 0.5)
-##                phys = VRScript.Core.Physical(self.getName(), VRScript.Resources.BoundingBox(self.mesh))
-##                phys.setPhysicsProperties(enemyPhysProps)
-##                phys.setConstraints(VRScript.Math.Vector(1,1,1), VRScript.Math.Vector(1,1,1))
-##                phys.setCollisionType(VRScript.Core.CollisionType.Static)
-##                phys.enableDebugVisual(True)
-##                self.attach(phys)
 		
         def OnInit(self, info):
-		# Instantiate Collider for Enemy Mesh
-                mat = VRScript.Math.Matrix().preScale(VRScript.Math.Vector(1,1,1))
-                #renderable = VRScript.Core.Renderable(self.getName(), VRScript.Resources.Mesh('Enemy','Enemy.osg',mat))
-                enemyPhysProps = VRScript.Core.PhysicsProperties(15, 0.4, 0.3, 0.3, 0.5)
-##                self.mesh = VRScript.Resources.Mesh(self.getName(), self.filename, mat)
-##                phys = VRScript.Core.Physical(self.getName(), VRScript.Resources.Box(VRScript.Math.Vector(1,1,1), VRScript.Math.Point(0,0,0)))
-
-
-                # Set enemy interactible
-                self.attach(VRScript.Core.Interactible(self.getName(), self.renderable('')))
-                self.interactible('').enableGrab(True)
-
-
-                #self.attach(Antlion_Angry)
-                #self.attach(Antlion_Attack)
-        
+		pass
 
         def OnUpdate(self, info):
                 # Update behavior when weapon is in contact with it
-                
-                
-                # Move closer to user when approaching enemy
-                enemyPos = self.movable().selfToWorld().getTranslation()
+		# Move closer to user when approaching enemy
                 user0 = VRScript.Core.Entity('User0')
-                currPos = user0.movable().selfToWorld().getTranslation()
-                atkRadius = VRScript.Math.Vector(3,3,3)
-                position = VRScript.Math.Matrix()
-                if((enemyPos - currPos).length2() < 65):
-                        self.state = 1
-                        vector = currPos - enemyPos
-                        vector = vector *.1
-##                        self.physical().applyImpulse(vector, VRScript.Math.Vector(0,0,0))
+                userWorldPos = user0.movable().selfToWorld().getTranslation()
+		userGridPos = [int(worldPos[0]/3), int(worldPos[1]/3)]
+		
+		xDist = userGridPos[0] - self.pos[0]
+		yDist = userGridPos[1] - self.pos[1]
+                
+		level.isPassable(x,y)
 
-                        if((enemyPos - currPos).length2() < 3.5):
-                                self.state = 2
-                                if(info.frameTime%1 > 0.99):                                        
-                                        player.hp = player.hp - 1
-                                        Ouch.play()
+		# next to
+		if : (abs(xDist) <= 1 and abs(yDist) <= 1):
+                        self.state = 2
+                        if(info.frameTime%1 > 0.99):                                        
+				player.hp = player.hp - 1
+				Ouch.play()
+
+		# moving towards
+		elif (abs(xDist) + abs(yDist)) < 4:
+		        self.state = 1
+			if abs(xDist) > abs(YDist):
+				if xDist > 0 :
+					self.pos[0] = self.pos[0] + 1
+				else:
+					self.pos[0] = self.pos[0] - 1
+			else:
+				if yDist > 0 :
+					self.pos[1] = self.pos[1] + 1
+				else:
+					self.pos[1] = self.pos[1] - 1
+
                 else:
                         self.state = 0
+
                 self.applyState()
 
-        def OnCollision(self, cbInfo, intInfo):
-##                print("COLLISION: " + self.getName() + " " + intInfo.otherEntity.getName())
-                weaponName= intInfo.otherEntity.getName()
-                if (weaponName == 'BroadSword'):
-                        print("Hit by BroadSword")
-                     #   hit.play()
-                elif(weaponName == 'Crowbar'):
-                        print("Hit by Crowbar")
-                      #  hit.play()
 
         def applyState(self):
                 if(self.state == 0):
@@ -185,29 +169,21 @@ class Enemy(VRScript.Core.Behavior):
         def play(self, mode):
                 self.anim = VRScript.Core.AnimationStrip('Take 001', 0.0, 0.0, 0, mode)
                 self.animable('').play(self.anim)
+
         def stop(self):
                 self.animable('').stop()
 
         def getProperties(self):
                 return self.type
 
-        def spawn(enemyName, filename, numEnemy, size):
-                i=0
-                enemyList = list()
-                while(i<numEnemy):
-                        imat = VRScript.Math.Matrix()
-                        enemy = Enemy(enemyName + str(i))
-                        enemy.load(filename, size)  # load takes in animation file amd size of the model
-                        enemy.play(VRScript.Core.PlayMode.Loop);
-                        imat.preTranslation(VRScript.Math.Vector(-5 + i * 6, -1, 3))
-                        enemy.movable().setPose(imat)
-                        enemyList.append(enemy)
-                        i=i+1
-        def spawnLoc(self, enemyName, filename, x, y, size):
+
+        def spawnLoc(self, enemyName, filename, x, y, size, level):
                 imat = VRScript.Math.Matrix()
                 enemy = Enemy(enemyName)
                 enemy.load(filename, size)
                 enemy.play(VRScript.Core.PlayMode.Loop);
-                imat.preTranslation(VRScript.Math.Vector(x, y, 0))
+                imat.preTranslation(VRScript.Math.Vector(x*3, y*3, 0))
+		self.pos = [x,y]
                 enemy.movable().setPose(imat)
+		self.level = level
 

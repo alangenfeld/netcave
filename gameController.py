@@ -241,18 +241,18 @@ class gameController(VRScript.Core.Behavior):
             y = pos[1] * 3
             if face is 0 : # forward
                 if self.level.getCurrentFloor().isPassable(pos[0],pos[1]+1): return
-                y += 3/2
+                y += 3.0/2
             elif face is 3 : # left
                 if self.level.getCurrentFloor().isPassable(pos[0]-1,pos[1]): return
-                x -= 3/2
+                x -= 3.0/2
             elif face is 1 : # right
                 if self.level.getCurrentFloor().isPassable(pos[0]+1,pos[1]): return
-                x += 3/2
+                x += 3.0/2
             else : # back
                 if self.level.getCurrentFloor().isPassable(pos[0],pos[1]-1): return
-                y -= 3/2
+                y -= 3.0/2
 
-            self.setTorch(self.currentTorch, x, y, 3/2)
+            self.setTorch(self.currentTorch, x, y, 3.0/2)
             self.currentTorch = (self.currentTorch + 1) % 4
             self.waitTorch = 5
             
