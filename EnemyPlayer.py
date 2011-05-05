@@ -88,7 +88,7 @@ Antlion_Angry = VRScript.Core.Audible('Ant_Angry', 'Sound Effects/antlion_guard/
 Antlion_Attack = VRScript.Core.Audible('Ant_Attack', 'Sound Effects/antlion/attack_single1.wav')
 
 class Enemy(VRScript.Core.Behavior):
-	pos = [0,0]
+        pos = [0,0]
 
         def __init__(self, entity=None):
                 VRScript.Core.Behavior.__init__(self,entity)
@@ -102,7 +102,7 @@ class Enemy(VRScript.Core.Behavior):
                 mat.preScale(VRScript.Math.Vector(size, size, size))
                 mat.preAxisAngle(90,VRScript.Math.Vector(1,0,0))
                 mat.postTranslation(VRScript.Math.Vector(-0,-20,0))
-		
+                
                 self.mesh = VRScript.Resources.Mesh(self.getName(), self.filename, mat)
                 self.attach(VRScript.Core.Renderable(self.getName(), self.mesh))
                 self.renderable('').show()
@@ -111,42 +111,42 @@ class Enemy(VRScript.Core.Behavior):
                 self.state = 0  # State of the enemy: 0 for idle, 1 for alert, 2 for attack, 3 for under attack, 4 for dying
                 self.type = "enemy"
 
-		
+                
         def OnInit(self, info):
-		pass
+                pass
 
         def OnUpdate(self, info):
                 # Update behavior when weapon is in contact with it
-		# Move closer to user when approaching enemy
+                # Move closer to user when approaching enemy
                 user0 = VRScript.Core.Entity('User0')
                 userWorldPos = user0.movable().selfToWorld().getTranslation()
-		userGridPos = [int(worldPos[0]/3), int(worldPos[1]/3)]
-		
-		xDist = userGridPos[0] - self.pos[0]
-		yDist = userGridPos[1] - self.pos[1]
+                userGridPos = [int(worldPos[0]/3), int(worldPos[1]/3)]
                 
-		level.isPassable(x,y)
+                xDist = userGridPos[0] - self.pos[0]
+                yDist = userGridPos[1] - self.pos[1]
+                
+                level.isPassable(x,y)
 
-		# next to
-		if : (abs(xDist) <= 1 and abs(yDist) <= 1):
+                # next to
+                if : (abs(xDist) <= 1 and abs(yDist) <= 1):
                         self.state = 2
                         if(info.frameTime%1 > 0.99):                                        
-				player.hp = player.hp - 1
-				Ouch.play()
+                                player.hp = player.hp - 1
+                                Ouch.play()
 
-		# moving towards
-		elif (abs(xDist) + abs(yDist)) < 4:
-		        self.state = 1
-			if abs(xDist) > abs(YDist):
-				if xDist > 0 :
-					self.pos[0] = self.pos[0] + 1
-				else:
-					self.pos[0] = self.pos[0] - 1
-			else:
-				if yDist > 0 :
-					self.pos[1] = self.pos[1] + 1
-				else:
-					self.pos[1] = self.pos[1] - 1
+                # moving towards
+                elif (abs(xDist) + abs(yDist)) < 4:
+                        self.state = 1
+                        if abs(xDist) > abs(YDist):
+                                if xDist > 0 :
+                                        self.pos[0] = self.pos[0] + 1
+                                else:
+                                        self.pos[0] = self.pos[0] - 1
+                        else:
+                                if yDist > 0 :
+                                        self.pos[1] = self.pos[1] + 1
+                                else:
+                                        self.pos[1] = self.pos[1] - 1
 
                 else:
                         self.state = 0
@@ -183,7 +183,7 @@ class Enemy(VRScript.Core.Behavior):
                 enemy.load(filename, size)
                 enemy.play(VRScript.Core.PlayMode.Loop);
                 imat.preTranslation(VRScript.Math.Vector(x*3, y*3, 0))
-		self.pos = [x,y]
+                self.pos = [x,y]
                 enemy.movable().setPose(imat)
-		self.level = level
+                self.level = level
 
