@@ -190,7 +190,8 @@ class gameController(VRScript.Core.Behavior):
     def OnUpdate(self,info):
         #print(str(self.USER.movable().getPose().getTranslation().x)+","+str(self.USER.movable().getPose().getTranslation().y))    
         if self.timer > 0:
-            if self.timer == 1 and len(self.level.getCurrentFloor().mobs)==0:
+#            if self.timer == 1 and len(self.level.getCurrentFloor().mobs)==0:
+            if self.timer == 1 and not self.level.getCurrentFloor().mobAlive:
                 self.level.getCurrentFloor().generateMobs(self.USERPOS)
                 
             if self.timer == int(self.DELAY/2)+1:

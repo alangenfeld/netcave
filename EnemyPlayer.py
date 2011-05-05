@@ -89,6 +89,8 @@ Antlion_Attack = VRScript.Core.Audible('Ant_Attack', 'Sound Effects/antlion/atta
 
 class Enemy(VRScript.Core.Behavior):
         pos = [0,0]
+        DELAY = 20
+        timer = 0
 
         def __init__(self, entity=None):
                 VRScript.Core.Behavior.__init__(self,entity)
@@ -116,19 +118,20 @@ class Enemy(VRScript.Core.Behavior):
                 pass
 
         def OnUpdate(self, info):
+                self.timer -= 1
+                if self.timer != 0 : return
+                self.timer = self.DELAY
                 # Update behavior when weapon is in contact with it
                 # Move closer to user when approaching enemy
                 user0 = VRScript.Core.Entity('User0')
                 userWorldPos = user0.movable().selfToWorld().getTranslation()
-                userGridPos = [int(worldPos[0]/3), int(worldPos[1]/3)]
+                userGridPos = [int(userWorldPos.x/3), int(userWorldPos.y/3)]
                 
                 xDist = userGridPos[0] - self.pos[0]
                 yDist = userGridPos[1] - self.pos[1]
-                
-                level.isPassable(x,y)
 
                 # next to
-                if : (abs(xDist) <= 1 and abs(yDist) <= 1):
+                if (abs(xDist) <= 1 and abs(yDist) <= 1):
                         self.state = 2
                         if(info.frameTime%1 > 0.99):                                        
                                 player.hp = player.hp - 1
@@ -147,7 +150,7 @@ class Enemy(VRScript.Core.Behavior):
                                         self.pos[1] = self.pos[1] + 1
                                 else:
                                         self.pos[1] = self.pos[1] - 1
-
+                                print(self.pos)
                 else:
                         self.state = 0
 
@@ -186,4 +189,4 @@ class Enemy(VRScript.Core.Behavior):
                 self.pos = [x,y]
                 enemy.movable().setPose(imat)
                 self.level = level
-
+                self.timer = self.DELAY

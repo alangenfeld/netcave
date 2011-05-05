@@ -90,7 +90,7 @@ class floor():
         
     def generateMobs(self, userPosition):
         #don't generate mobs every step or user will never get downtime
-        if random.random()<0.02 and not self.mobAlive:
+        if random.random()<0.2 and not self.mobAlive:
             spawnPLocs = []
             spawnLocs = []
             for y in range(userPosition[0]-9,userPosition[1]+9+1) :
