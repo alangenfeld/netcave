@@ -138,13 +138,15 @@ class Enemy(VRScript.Core.Behavior):
 
                 # next to
                 if (abs(xDist) <= 1 and abs(yDist) <= 1):
+                        print("state2")
                         self.state = 2
 #                        if(info.frameTime%1 > 0.99):                                        
                         player.hp = player.hp - 1
                         Ouch.play()
 
                 # moving towards
-                elif (abs(xDist) + abs(yDist)) < 4:
+                elif (abs(xDist) + abs(yDist)) < 12:
+                        print("state1")
                         self.state = 1
                         if abs(xDist) > abs(yDist):
                                 if xDist > 0 :
@@ -152,11 +154,15 @@ class Enemy(VRScript.Core.Behavior):
                                 else:
                                         self.pos[0] = self.pos[0] - 1
                         else:
+
                                 if yDist > 0 :
                                         self.pos[1] = self.pos[1] + 1
                                 else:
                                         self.pos[1] = self.pos[1] - 1
-                                print(self.pos)
+                                
+                                imat = VRScript.Math.Matrix()
+                                imat.preTranslation(VRScript.Math.Vector(self.pos[0]*3, self.pos[1]*3, 0))
+                                self.movable().setPose(imat)
                 else:
                         self.state = 0
 
@@ -188,11 +194,10 @@ class Enemy(VRScript.Core.Behavior):
 
         def spawnLoc(self, enemyName, filename, x, y, size, level):
                 imat = VRScript.Math.Matrix()
-                enemy = Enemy(enemyName)
-                enemy.load(filename, size)
-                enemy.play(VRScript.Core.PlayMode.Loop);
+                self.load(filename, size)
+                self.play(VRScript.Core.PlayMode.Loop);
                 imat.preTranslation(VRScript.Math.Vector(x*3, y*3, 0))
                 self.pos = [x,y]
-                enemy.movable().setPose(imat)
+                self.movable().setPose(imat)
                 self.level = level
                 self.timer = self.DELAY
