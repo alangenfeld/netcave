@@ -190,7 +190,8 @@ class gameController(VRScript.Core.Behavior):
     def OnUpdate(self,info):
         #print(str(self.USER.movable().getPose().getTranslation().x)+","+str(self.USER.movable().getPose().getTranslation().y))    
         if self.timer > 0:
-            if self.timer == 1 and len(self.level.getCurrentFloor().mobs)==0:
+#            if self.timer == 1 and len(self.level.getCurrentFloor().mobs)==0:
+            if self.timer == 1 and not self.level.getCurrentFloor().mobAlive:
                 self.level.getCurrentFloor().generateMobs(self.USERPOS)
                 
             if self.timer == int(self.DELAY/2)+1:
@@ -241,18 +242,18 @@ class gameController(VRScript.Core.Behavior):
             y = pos[1] * 3
             if face is 0 : # forward
                 if self.level.getCurrentFloor().isPassable(pos[0],pos[1]+1): return
-                y += 3/2
+                y += 3.0/2
             elif face is 3 : # left
                 if self.level.getCurrentFloor().isPassable(pos[0]-1,pos[1]): return
-                x -= 3/2
+                x -= 3.0/2
             elif face is 1 : # right
                 if self.level.getCurrentFloor().isPassable(pos[0]+1,pos[1]): return
-                x += 3/2
+                x += 3.0/2
             else : # back
                 if self.level.getCurrentFloor().isPassable(pos[0],pos[1]-1): return
-                y -= 3/2
+                y -= 3.0/2
 
-            self.setTorch(self.currentTorch, x, y, 3/2)
+            self.setTorch(self.currentTorch, x, y, 3.0/2)
             self.currentTorch = (self.currentTorch + 1) % 4
             self.waitTorch = 5
             
