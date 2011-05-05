@@ -121,26 +121,32 @@ class Enemy(VRScript.Core.Behavior):
                 self.timer -= 1
                 if self.timer != 0 : return
                 self.timer = self.DELAY
+                print("MONSTAR")
+                print(self.pos)
+
                 # Update behavior when weapon is in contact with it
                 # Move closer to user when approaching enemy
                 user0 = VRScript.Core.Entity('User0')
                 userWorldPos = user0.movable().selfToWorld().getTranslation()
                 userGridPos = [int(userWorldPos.x/3), int(userWorldPos.y/3)]
-                
+
+                print("YOU")
+                print(userGridPos)
+
                 xDist = userGridPos[0] - self.pos[0]
                 yDist = userGridPos[1] - self.pos[1]
 
                 # next to
                 if (abs(xDist) <= 1 and abs(yDist) <= 1):
                         self.state = 2
-                        if(info.frameTime%1 > 0.99):                                        
-                                player.hp = player.hp - 1
-                                Ouch.play()
+#                        if(info.frameTime%1 > 0.99):                                        
+                        player.hp = player.hp - 1
+                        Ouch.play()
 
                 # moving towards
                 elif (abs(xDist) + abs(yDist)) < 4:
                         self.state = 1
-                        if abs(xDist) > abs(YDist):
+                        if abs(xDist) > abs(yDist):
                                 if xDist > 0 :
                                         self.pos[0] = self.pos[0] + 1
                                 else:
