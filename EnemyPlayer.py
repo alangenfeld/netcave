@@ -163,19 +163,24 @@ class Enemy():
                 Ouch.play()
 
                 # moving towards
-            elif (abs(xDist) + abs(yDist)) < 120:
+            elif (abs(xDist) + abs(yDist)) < 8:
                 print("state1")
                 self.state = 1
-                if abs(xDist) > abs(yDist):
+                if abs(xDist) > 1 :
                     if xDist > 0 :
-                        self.dest[0] = self.pos[0] + 1
+                        if self.level.isPassable(self.pos[0] + 1, self.pos[1]):
+                            self.dest[0] = self.pos[0] + 1
                     else:
-                        self.dest[0] = self.pos[0] - 1
-                else:
+                        if self.level.isPassable(self.pos[0] - 1, self.pos[1]):
+                            self.dest[0] = self.pos[0] - 1
+
+                if abs(yDist) > 1 :
                     if yDist > 0 :
-                        self.dest[1] = self.pos[1] + 1
+                        if self.level.isPassable(self.pos[0], self.pos[1] + 1):
+                            self.dest[1] = self.pos[1] + 1
                     else:
-                        self.dest[1] = self.pos[1] - 1
+                        if self.level.isPassable(self.pos[0], self.pos[1] - 1):
+                            self.dest[1] = self.pos[1] - 1
 
                 self.moving = True
                 print("new dest set", self.dest, self.pos)
@@ -208,6 +213,11 @@ class Enemy():
         def getProperties(self):
                 return self.type
 
+        def isHere(self, x, y):
+            if self.moving:
+                return self.dest[0] == x and self.dest[1] == y
+            else:
+                return self.pos[0] == x and self.pos[1] == y
 
         def spawnLoc(self, enemyName, filename, x, y, size, level):
                 imat = VRScript.Math.Matrix()

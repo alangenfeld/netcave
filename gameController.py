@@ -175,7 +175,9 @@ class gameController(VRScript.Core.Behavior):
                         narg+='X'
                     else:
                         t = self.level.getCurrentFloor().dungeon[y][x]
-                        if t == 0 or t == 9:
+                        if self.level.getCurrentFloor().mobAlive and self.level.getCurrentFloor().mob.isHere(x,y):
+                            narg += 'M'
+                        elif t == 0 or t == 9:
                             narg += ' '
                         elif t == 1 or t == 2 or t == 6:
                             narg += '#'

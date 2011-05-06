@@ -82,8 +82,9 @@ class floor():
         return self.dungeon[y][x]
         
     def isPassable(self, x, y):
+        mobPresent = self.mobAlive and self.mob.isHere(x, y)
         try:
-            passable = self.dungeon[y][x] != 1 and self.dungeon[y][x] != 2
+            passable = self.dungeon[y][x] != 1 and self.dungeon[y][x] != 2 and not mobPresent
         except:
             passable = False
 
