@@ -88,8 +88,10 @@ Antlion_Attack = VRScript.Core.Audible('Ant_Attack', 'Sound Effects/antlion/atta
 
 class Enemy():
         pos = [0,0]
+        dest = [0,0]
         DELAY = 20
         timer = 0
+        moving = False
 
         def __init__(self, enum):
                 self.enum = enum
@@ -118,56 +120,71 @@ class Enemy():
                 pass
 
         def OnUpdate(self, info, player):
-                self.timer -= 1
-                if self.timer != 0 : return
-                self.timer = self.DELAY
-                print("MONSTAR")
-                print(self.pos)
+            #progress delay, update position
+            self.timer += 1
+            if self.timer <= self.DELAY : 
 
-                # Update behavior when weapon is in contact with it
-                # Move closer to user when approaching enemy
-                user0 = VRScript.Core.Entity('User0')
-                userWorldPos = user0.movable().selfToWorld().getTranslation()
-                userGridPos = [int(userWorldPos.x/3), int(userWorldPos.y/3)]
+                if self.moving:
+                    imat = VRScript.Math.Matrix()
+                    x = self.pos[0] + ((self.dest[0] - self.pos[0]) * (self.timer/self.DELAY))
+                    y = self.pos[1] + ((self.dest[1] - self.pos[1]) * (self.timer/self.DELAY))
+                    #figure out rotate
+                    imat.preTranslation(VRScript.Math.Vector(x*3, y*3, 0))
+                    self.eent.movable().setPose(imat)
+            
+                return
 
-                print("YOU")
-                print(userGridPos)
+            # delay over, update
+            if self.moving:
+                print("setting pos to dest")
+                self.pos[0] = self.dest[0]
+                self.pos[1] = self.dest[1]
+                self.moving = False
 
-                xDist = userGridPos[0] - self.pos[0]
-                yDist = userGridPos[1] - self.pos[1]
-
-                # next to
-                if (abs(xDist) <= 1 and abs(yDist) <= 1):
-                        print("state2")
-                        self.state = 2
-#                        if(info.frameTime%1 > 0.99):                                        
-                        player.hp = player.hp - 1
-                        Ouch.play()
+            self.timer = 0
+            print("MONSTAR", self.pos)
+            
+            # Update behavior when weapon is in contact with it
+            # Move closer to user when approaching enemy
+            user0 = VRScript.Core.Entity('User0')
+            userWorldPos = user0.movable().selfToWorld().getTranslation()
+            userGridPos = [int(userWorldPos.x/3), int(userWorldPos.y/3)]
+            
+            print("YOU", userGridPos)
+            
+            xDist = userGridPos[0] - self.pos[0]
+            yDist = userGridPos[1] - self.pos[1]
+            
+            # next to
+            if (abs(xDist) <= 1 and abs(yDist) <= 1):
+                print("state2")
+                self.state = 2
+                player.hp = player.hp - 1
+                Ouch.play()
 
                 # moving towards
-                elif (abs(xDist) + abs(yDist)) < 12:
-                        print("state1")
-                        self.state = 1
-                        if abs(xDist) > abs(yDist):
-                                if xDist > 0 :
-                                        self.pos[0] = self.pos[0] + 1
-                                else:
-                                        self.pos[0] = self.pos[0] - 1
-                        else:
-
-                                if yDist > 0 :
-                                        self.pos[1] = self.pos[1] + 1
-                                else:
-                                        self.pos[1] = self.pos[1] - 1
-                                
-                                imat = VRScript.Math.Matrix()
-                                imat.preTranslation(VRScript.Math.Vector(self.pos[0]*3, self.pos[1]*3, 0))
-                                self.eent.movable().setPose(imat)
+            elif (abs(xDist) + abs(yDist)) < 120:
+                print("state1")
+                self.state = 1
+                if abs(xDist) > abs(yDist):
+                    if xDist > 0 :
+                        self.dest[0] = self.pos[0] + 1
+                    else:
+                        self.dest[0] = self.pos[0] - 1
                 else:
-                        self.state = 0
+                    if yDist > 0 :
+                        self.dest[1] = self.pos[1] + 1
+                    else:
+                        self.dest[1] = self.pos[1] - 1
 
-                self.applyState()
+                self.moving = True
+                print("new dest set", self.dest, self.pos)
 
+            else:
+                self.state = 0
+                
+            self.applyState()
+                
 
         def applyState(self):
                 if(self.state == 0):
@@ -198,6 +215,7 @@ class Enemy():
                 self.play(VRScript.Core.PlayMode.Loop);
                 imat.preTranslation(VRScript.Math.Vector(x*3, y*3, 0))
                 self.pos = [x,y]
+                self.dest = [x,y]
                 self.eent.movable().setPose(imat)
                 self.level = level
-                self.timer = self.DELAY
+                self.timer = 0
