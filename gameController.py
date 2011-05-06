@@ -197,8 +197,10 @@ class gameController(VRScript.Core.Behavior):
     def OnUpdate(self,info):
         if not (self.player == None):
             self.player.OnUpdate("")
+
         if  self.level.getCurrentFloor().mobAlive:
-            self.level.getCurrentFloor().mob.OnUpdate(info,self.player)
+            self.level.getCurrentFloor().mob.OnUpdate(info,self.player, self.USERPOS)
+
         #print(str(self.USER.movable().getPose().getTranslation().x)+","+str(self.USER.movable().getPose().getTranslation().y))    
         if self.timer > 0:
 #            if self.timer == 1 and len(self.level.getCurrentFloor().mobs)==0:

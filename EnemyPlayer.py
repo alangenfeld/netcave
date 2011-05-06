@@ -1,5 +1,6 @@
 import VRScript
 import level
+import math
 # ------------------------ Player ------------------------ #
 
 healthWarn_1 = VRScript.Core.Audible('healthWarn_1', 'Sound Effects/warning/fvox/health_dropping.wav')
@@ -87,6 +88,7 @@ Antlion_Angry = VRScript.Core.Audible('Ant_Angry', 'Sound Effects/antlion_guard/
 Antlion_Attack = VRScript.Core.Audible('Ant_Attack', 'Sound Effects/antlion/attack_single1.wav')
 
 class Enemy():
+        Z_OFFSET = .5
         pos = [0,0]
         dest = [0,0]
         DELAY = 20
@@ -119,19 +121,33 @@ class Enemy():
         def OnInit(self, info):
                 pass
 
-        def OnUpdate(self, info, player):
+        def OnUpdate(self, info, player, user):
             #progress delay, update position
             self.timer += 1
-            if self.timer <= self.DELAY : 
-
+            if self.timer < self.DELAY : 
                 if self.moving:
                     imat = VRScript.Math.Matrix()
                     x = self.pos[0] + ((self.dest[0] - self.pos[0]) * (self.timer/self.DELAY))
                     y = self.pos[1] + ((self.dest[1] - self.pos[1]) * (self.timer/self.DELAY))
                     #figure out rotate
-                    imat.preTranslation(VRScript.Math.Vector(x*3, y*3, 0))
+                    #angle = -math.degrees(math.acos(VRScript.Math.Vector(0,1,0).dot(VRScript.Math.Vector(self.dest[0]-self.pos[0], self.dest[1]-self.pos[1],0))))
+                    angle = math.degrees(math.atan2(self.dest[0] - self.pos[0], -(self.dest[1] - self.pos[1])))
+                    print(angle)
+                    imat.preAxisAngle(angle, VRScript.Math.Vector(0,0,1))
+                    imat.preTranslation(VRScript.Math.Vector(x*3, y*3, self.Z_OFFSET))
                     self.eent.movable().setPose(imat)
-            
+                return
+            if self.timer == self.DELAY : 
+                if self.moving:
+                    imat = VRScript.Math.Matrix()
+                    x = self.pos[0] + ((self.dest[0] - self.pos[0]) * (self.timer/self.DELAY))
+                    y = self.pos[1] + ((self.dest[1] - self.pos[1]) * (self.timer/self.DELAY))
+                    #figure out rotate
+                    #angle = -math.degrees(math.acos(VRScript.Math.Vector(0,1,0).dot(VRScript.Math.Vector(self.dest[0]-self.pos[0], self.dest[1]-self.pos[1],0))))
+                    angle = math.degrees(math.atan2(user[0] - self.dest[0], -(user[1] - self.dest[1])))
+                    imat.preAxisAngle(angle, VRScript.Math.Vector(0,0,1))
+                    imat.preTranslation(VRScript.Math.Vector(x*3, y*3, self.Z_OFFSET))
+                    self.eent.movable().setPose(imat)
                 return
 
             # delay over, update
@@ -146,18 +162,19 @@ class Enemy():
             
             # Update behavior when weapon is in contact with it
             # Move closer to user when approaching enemy
-            user0 = VRScript.Core.Entity('User0')
-            userWorldPos = user0.movable().selfToWorld().getTranslation()
-            userGridPos = [int(userWorldPos.x/3), int(userWorldPos.y/3)]
+            print("YOU", user)
             
-            print("YOU", userGridPos)
-            
-            xDist = userGridPos[0] - self.pos[0]
-            yDist = userGridPos[1] - self.pos[1]
+            xDist = user[0] - self.pos[0]
+            yDist = user[1] - self.pos[1]
             
             # next to
             if (abs(xDist) <= 1 and abs(yDist) <= 1):
                 print("state2")
+                imat = VRScript.Math.Matrix()
+                angle = math.degrees(math.atan2(user[0] - self.dest[0], -(user[1] - self.dest[1])))
+                imat.preAxisAngle(angle, VRScript.Math.Vector(0,0,1))
+                imat.preTranslation(VRScript.Math.Vector(self.pos[0]*3, self.pos[1]*3, .3))
+                self.eent.movable().setPose(imat)
                 self.state = 2
                 player.hp = player.hp - 1
                 Ouch.play()
@@ -223,7 +240,7 @@ class Enemy():
                 imat = VRScript.Math.Matrix()
                 self.load(filename, size)
                 self.play(VRScript.Core.PlayMode.Loop);
-                imat.preTranslation(VRScript.Math.Vector(x*3, y*3, 0))
+                imat.preTranslation(VRScript.Math.Vector(x*3, y*3, self.Z_OFFSET))
                 self.pos = [x,y]
                 self.dest = [x,y]
                 self.eent.movable().setPose(imat)

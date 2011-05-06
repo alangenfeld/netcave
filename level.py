@@ -19,6 +19,7 @@ class floor():
     items = []
     # switching to only one mob for time sake
     mobAlive = False
+    mob = None
     depth = -1
     CAVE = 0
     wallmap = {}
