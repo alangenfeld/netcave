@@ -207,7 +207,7 @@ class floor():
                         
                     if self.dungeon[y][x] >=3 and self.dungeon[y][x] <=5:
                         self.wallList += [self.makeEntity('Doorway',x,y,0,offset)]
-                        self.wallList += [self.makeEntity('Door',x,y,0,offset)]
+                        #self.wallList += [self.makeEntity('Door',x,y,0,offset)]
                         
     def makeEntity(self,typing,x,y,z,offset):
         loc = '[' + str(y) + '][' + str(x) + ']'

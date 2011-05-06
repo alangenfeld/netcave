@@ -10,7 +10,7 @@ Geode {
       textureUnit 0 {
         GL_TEXTURE_2D ON
         Texture2D {
-          file "mountain_normal.png"
+          file "Slumbering_Volcano_NRM.jpg"
           wrap_s REPEAT
           wrap_t REPEAT
           wrap_r REPEAT
@@ -28,7 +28,7 @@ Geode {
       textureUnit 1 {
         GL_TEXTURE_2D ON
         Texture2D {
-          file "stone_br.jpg"
+          file "Slumbering_Volcano.png"
           wrap_s REPEAT
           wrap_t REPEAT
           wrap_r REPEAT
@@ -176,7 +176,7 @@ Geode {
                           "vec3 N = normalize(nmatrix*(texture(WallNormal, TexCoord).xyz*2.0-1.0));"
                           "//vec3 N = normalize(2.0 * texture(WallNormal, TexCoord).xzy - 1.0);"
                           "vec4 finalColor = vec4(0.0, 0.0, 0.0, 0.0);"
-                          "vec4 diffuse =  vec4( 1.0, 0.749, 0.0, 1.0 );"
+                          "vec4 diffuse =  vec4( 1.0, 0.749, 0.6, 1.0 );"
                           "vec4 specular = vec4( 1, 1, 1, 1 );"
                           "vec4 ambient = vec4( 0, 0, 0, 1);"
                           "float shininess = 6;"
