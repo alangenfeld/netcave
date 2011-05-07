@@ -89,7 +89,7 @@ Antlion_Angry = VRScript.Core.Audible('Ant_Angry', 'Sound Effects/antlion_guard/
 Antlion_Attack = VRScript.Core.Audible('Ant_Attack', 'Sound Effects/antlion/attack_single1.wav')
 
 class Enemy():
-        Z_OFFSET = .8
+        Z_OFFSET = 1
         pos = [0,0]
         dest = [0,0]
         DELAY = 20
@@ -131,6 +131,7 @@ class Enemy():
                 imat = VRScript.Math.Matrix()
                 z = self.Z_OFFSET  - (self.timer/self.DELAY)
                 imat.preTranslation(VRScript.Math.Vector(self.pos[0], self.pos[1], z))
+                print("im dying..", self.pos[0]*3, self.pos[1]*3, z)
                 self.eent.movable().setPose(imat)
                 return
             elif self.dying :
@@ -145,7 +146,6 @@ class Enemy():
                     x = self.pos[0] + ((self.dest[0] - self.pos[0]) * (self.timer/self.DELAY))
                     y = self.pos[1] + ((self.dest[1] - self.pos[1]) * (self.timer/self.DELAY))
                     #figure out rotate
-                    #angle = -math.degrees(math.acos(VRScript.Math.Vector(0,1,0).dot(VRScript.Math.Vector(self.dest[0]-self.pos[0], self.dest[1]-self.pos[1],0))))
                     angle = math.degrees(math.atan2(self.dest[0] - self.pos[0], -(self.dest[1] - self.pos[1])))
                     imat.preAxisAngle(angle, VRScript.Math.Vector(0,0,1))
                     imat.preTranslation(VRScript.Math.Vector(x*3, y*3, self.Z_OFFSET))
@@ -182,7 +182,7 @@ class Enemy():
                 imat = VRScript.Math.Matrix()
                 angle = math.degrees(math.atan2(user[0] - self.dest[0], -(user[1] - self.dest[1])))
                 imat.preAxisAngle(angle, VRScript.Math.Vector(0,0,1))
-                imat.preTranslation(VRScript.Math.Vector(self.pos[0]*3, self.pos[1]*3, .3))
+                imat.preTranslation(VRScript.Math.Vector(self.pos[0]*3, self.pos[1]*3, self.Z_OFFSET))
                 self.eent.movable().setPose(imat)
                 self.state = 2
                 player.hp = player.hp - 1
@@ -269,8 +269,8 @@ class Enemy():
         def spawnLoc(self, enemyName, filename, x, y, size, level):
                 imat = VRScript.Math.Matrix()
                 self.load(filename, size)
-                self.play(VRScript.Core.PlayMode.Loop);
                 imat.preTranslation(VRScript.Math.Vector(x*3, y*3, self.Z_OFFSET))
+                self.play(VRScript.Core.PlayMode.Loop)
                 self.pos = [x,y]
                 self.dest = [x,y]
                 self.eent.movable().setPose(imat)
