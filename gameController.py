@@ -161,7 +161,8 @@ class gameController(VRScript.Core.Behavior):
                 self.left()
 
                 
-            self.minimap.setText( self.getMiniMap(5))
+            self.minimap.setText( self.getMiniMap(4))
+            print(self.getMiniMap(4))
             print(USER.movable().getPose().getTranslation().x,USER.movable().getPose().getTranslation().y)
 
     def getMiniMap(self, size):
@@ -241,22 +242,10 @@ class gameController(VRScript.Core.Behavior):
             
         if self.timer == 0:
             self.moveUser()
-            
-        pos = self.USER.movable().getPose().getTranslation()
         
-        for x in range(len(self.torches)):
-            torch = self.torches[x]
-            self.level.setLight( x, ( torch.x-pos.x, torch.z-pos.z, -torch.y+pos.y, 1 ) )
-            #print(str(x)+' '+str(( torch.x-pos.x, torch.z-pos.z, -torch.y+pos.y, 1 )))
-        self.level.updateLights()
-        
-        if self.waitTorch>0:
-            self.waitTorch-=1
-        #self.level.setLight( 1, ( 0, 0, -9, 1 ) )
-
-    def OnButtonPress(self, cbInfo, btnInfo, intInfo):
-        print(str(btnInfo.button))
-        if (btnInfo.button == 4 and self.timer==0 and self.waitTorch==0):
+        controller = VRScript.Util.getControllerState();
+        btnInfo = controller["button"];
+        if (btnInfo[0] and self.timer==0 and self.waitTorch==0):
             pos = self.USERPOS
             face = self.getFacing()
             x = pos[0] * 3
@@ -276,7 +265,23 @@ class gameController(VRScript.Core.Behavior):
 
             self.setTorch(self.currentTorch, x, y, 3.0/2)
             self.currentTorch = (self.currentTorch + 1) % 4
-            self.waitTorch = 5
+            self.waitTorch = 5    
+        
+        pos = self.USER.movable().getPose().getTranslation()
+        
+        for x in range(len(self.torches)):
+            torch = self.torches[x]
+            self.level.setLight( x, ( torch.x-pos.x, torch.z-pos.z, -torch.y+pos.y, 1 ) )
+            #print(str(x)+' '+str(( torch.x-pos.x, torch.z-pos.z, -torch.y+pos.y, 1 )))
+        self.level.updateLights()
+        
+        if self.waitTorch>0:
+            self.waitTorch-=1
+        #self.level.setLight( 1, ( 0, 0, -9, 1 ) )
+
+    def OnButtonPress(self, cbInfo, btnInfo, intInfo):
+        print(str(btnInfo.button))
+     
             
     def devButton(self):
         button =  VRScript.Util.getControllerState(0)['button']

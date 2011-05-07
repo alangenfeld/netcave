@@ -67,6 +67,13 @@ VRScript.Core.Entity('User0').physical('').applyImpulse(loc2-loc,VRScript.Math.V
 
 
 entityList = []
+
+ambient = VRScript.Core.Audible('ambient', 'Sound Effects/ambient.wav')
+props = ambient.getAudioProperties()
+props.loop = True
+ambient.setAudioProperties(props)
+ambient.play()
+
 print('Loading Finished')
 #VRScript.Interaction.setNavigationSpeed(6,0)
 #cube_e = VRScript.Core.Entity('blarg')
