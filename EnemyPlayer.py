@@ -80,6 +80,9 @@ class Player():
 # ------------------------ Enemy ------------------------ #
 
 Ouch = VRScript.Core.Audible('Ouch', 'Sound Effects/Pain Voices/voices/ba_pain08.wav')
+Hurt = VRScript.Core.Audible('Hurt', 'Sound Effects/antlion/pain2.wav')
+Hit = VRScript.Core.Audible('Hit', 'Sound Effects/antlion/shell_strike4.wav')
+Die = VRScript.Core.Audible('Die', 'Sound Effects/antlion/land1.wav')
 ##Antlion_Idle = VRScript.Core.Audible('Ant_idle', 'Sound Effects/antlion/idle2.wav')
 ##loop = Antlion_Idle.getAudioProperties()
 ##loop.loop = True
@@ -93,12 +96,13 @@ class Enemy():
         dest = [0,0]
         DELAY = 20
         timer = 0
+        MAX_HP = 3
+        hp = 0
         moving = False
 
         def __init__(self, enum):
                 self.enum = enum
 
-                
         def load(self, filename, size):
                 self.filename = filename
                 print("Load animation: ")
@@ -121,7 +125,7 @@ class Enemy():
         def OnInit(self, info):
                 pass
 
-        def OnUpdate(self, info, player, user):
+        def OnUpdate(self, info, player, user, facing):
             #progress delay, update position
             self.timer += 1
             if self.timer < self.DELAY : 
@@ -132,7 +136,6 @@ class Enemy():
                     #figure out rotate
                     #angle = -math.degrees(math.acos(VRScript.Math.Vector(0,1,0).dot(VRScript.Math.Vector(self.dest[0]-self.pos[0], self.dest[1]-self.pos[1],0))))
                     angle = math.degrees(math.atan2(self.dest[0] - self.pos[0], -(self.dest[1] - self.pos[1])))
-                    print(angle)
                     imat.preAxisAngle(angle, VRScript.Math.Vector(0,0,1))
                     imat.preTranslation(VRScript.Math.Vector(x*3, y*3, self.Z_OFFSET))
                     self.eent.movable().setPose(imat)
@@ -152,24 +155,19 @@ class Enemy():
 
             # delay over, update
             if self.moving:
-                print("setting pos to dest")
                 self.pos[0] = self.dest[0]
                 self.pos[1] = self.dest[1]
                 self.moving = False
 
             self.timer = 0
-            print("MONSTAR", self.pos)
             
             # Update behavior when weapon is in contact with it
             # Move closer to user when approaching enemy
-            print("YOU", user)
-            
             xDist = user[0] - self.pos[0]
             yDist = user[1] - self.pos[1]
             
             # next to
             if (abs(xDist) <= 1 and abs(yDist) <= 1):
-                print("state2")
                 imat = VRScript.Math.Matrix()
                 angle = math.degrees(math.atan2(user[0] - self.dest[0], -(user[1] - self.dest[1])))
                 imat.preAxisAngle(angle, VRScript.Math.Vector(0,0,1))
@@ -177,11 +175,30 @@ class Enemy():
                 self.eent.movable().setPose(imat)
                 self.state = 2
                 player.hp = player.hp - 1
-                Ouch.play()
+                if facing == 0: # forward
+                    if self.pos[1] > user[1]:
+                        self.hp -= 1
+                        Hurt.play()
+                        Hit.play()
+                elif facing == 1: # right
+                    if self.pos[0] > user[0]:
+                        self.hp -= 1
+                        Hurt.play()
+                        Hit.play()
+                elif facing == 2: # back 
+                    if self.pos[1] < user[1]:
+                        self.hp -= 1
+                        Hurt.play()
+                        Hit.play()
+                elif facing == 3: # left
+                    if self.pos[0] < user[0]:
+                        self.hp -= 1
+                        Hurt.play()
+                        Hit.play()
+                        
 
                 # moving towards
             elif (abs(xDist) + abs(yDist)) < 8:
-                print("state1")
                 self.state = 1
                 if abs(xDist) > 1 :
                     if xDist > 0 :
@@ -200,26 +217,31 @@ class Enemy():
                             self.dest[1] = self.pos[1] - 1
 
                 self.moving = True
-                print("new dest set", self.dest, self.pos)
 
             else:
                 self.state = 0
                 
-            self.applyState()
+            if self.hp <= 0:
+                self.level.mobAlive = False
+                self.eent.renderable('').hide()
+                Die.play()
+            else: 
+                self.applyState()
                 
 
         def applyState(self):
-                if(self.state == 0):
-                        Antlion_Idle = VRScript.Core.Audible(self.eent.getName()+'Ant_idle', 'Sound Effects/antlion/idle2.wav')
-                        loop = Antlion_Idle.getAudioProperties()
-                        loop.loop = True
-                        self.eent.attach(Antlion_Idle)
-                        self.eent.audible(self.eent.getName()+'Ant_idle').play()
-                elif(self.state == 1):
-                        Antlion_Angry.play()
-                elif(self.state == 2):
-                        Antlion_Attack.play()
-                        
+            if(self.state == 0):
+                Antlion_Idle = VRScript.Core.Audible(self.eent.getName()+'Ant_idle', 'Sound Effects/antlion/idle2.wav')
+                loop = Antlion_Idle.getAudioProperties()
+                loop.loop = True
+                self.eent.attach(Antlion_Idle)
+                self.eent.audible(self.eent.getName()+'Ant_idle').play()
+            elif(self.state == 1):
+                Antlion_Angry.play()
+            elif(self.state == 2):
+                Ouch.play()
+                Antlion_Attack.play()
+                
         def play(self, mode):
                 self.eent.anim = VRScript.Core.AnimationStrip('Take 001', 0.0, 0.0, 0, mode)
                 self.eent.animable('').play(self.eent.anim)
@@ -246,3 +268,4 @@ class Enemy():
                 self.eent.movable().setPose(imat)
                 self.level = level
                 self.timer = 0
+                self.hp = self.MAX_HP

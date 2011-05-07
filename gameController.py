@@ -199,7 +199,7 @@ class gameController(VRScript.Core.Behavior):
             self.player.OnUpdate("")
 
         if  self.level.getCurrentFloor().mobAlive:
-            self.level.getCurrentFloor().mob.OnUpdate(info,self.player, self.USERPOS)
+            self.level.getCurrentFloor().mob.OnUpdate(info,self.player, self.USERPOS, self.getFacing())
 
         #print(str(self.USER.movable().getPose().getTranslation().x)+","+str(self.USER.movable().getPose().getTranslation().y))    
         if self.timer > 0:
