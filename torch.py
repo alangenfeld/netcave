@@ -25,7 +25,11 @@ class torch():
         self.x = x
         self.y = y
         self.z = z
+        size = 60
         torch_e = VRScript.Core.Entity(self.name)
-        torch_e.movable().setPose(VRScript.Math.Matrix().
-                                 preTranslation(VRScript.Math.Vector(self.x, self.y, self.z)))
+        mat = VRScript.Math.Matrix()
+        mat.preScale(VRScript.Math.Vector(size, size, size))
+        mat.preTranslation(VRScript.Math.Vector(self.x, self.y, self.z))
+        torch_e.movable().setPose(mat)
+                                  
         
