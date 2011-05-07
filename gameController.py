@@ -31,12 +31,12 @@ class gameController(VRScript.Core.Behavior):
 
         m = VRScript.Math.Matrix()
         m = m.postScale( VRScript.Math.Vector( .5, .5, .5 ))
-        m = m.postTranslation( VRScript.Math.Vector( 0, -2, .5 ))
+        m = m.postTranslation( VRScript.Math.Vector( 0, -1.5, .5 ))
         m = m.postAxisAngle( 180, VRScript.Math.Vector(0,0,1) )
         m = m.postAxisAngle( 180, VRScript.Math.Vector(0,1,0,) )
         m = m.postAxisAngle( 90, VRScript.Math.Vector(1,0,0,) )
  
-        self.minimap = VRScript.Core.FontText( "MiniMap", "", "VeraMono.ttf", m )
+        self.minimap = VRScript.Core.FontText( "MiniMap", "", "minimap.ttf", m )
         self.minimap.setColor(VRScript.Core.Color( 1,1, 1,1))
         self.USER.attach( self.minimap )
         self.minimap.show()
@@ -161,14 +161,18 @@ class gameController(VRScript.Core.Behavior):
                 self.left()
 
                 
-            self.minimap.setText( self.getMiniMap(11))
+            self.minimap.setText( self.getMiniMap(5))
             print(USER.movable().getPose().getTranslation().x,USER.movable().getPose().getTranslation().y)
 
     def getMiniMap(self, size):
         USERPOS = self.USERPOS
-        mini = ""
+        mini = ";"
+        for x in range(USERPOS[0]-size,USERPOS[0]+size+1):
+            mini += "_"
+        mini += "'\n"
+        
         for y in range(USERPOS[1]+size,USERPOS[1]-size-1,-1):
-            narg = ""
+            narg = "|"
             for x in range(USERPOS[0]-size,USERPOS[0]+size+1):
                 if x>=0 and x<len(self.level.getCurrentFloor().dungeon) and y>=0 and y<len(self.level.getCurrentFloor().dungeon[0]):
                     if x==USERPOS[0] and y==USERPOS[1]:
@@ -182,16 +186,20 @@ class gameController(VRScript.Core.Behavior):
                         elif t == 1 or t == 2 or t == 6:
                             narg += '#'
                         elif t == 3:
-                            narg += '('
+                            narg += ' '
                         elif t == 4 or t == 5:
-                            narg += 'D'
+                            narg += ' '
                         elif t == 7:
                             narg += '<'
                         elif t == 8:
                             narg += '>'
                 else:
                     narg+='#'
-            mini += narg + '\n'
+            mini += narg + '|\n'
+        mini += ","
+        for x in range(USERPOS[0]-size,USERPOS[0]+size+1):
+            mini += "_"
+        mini += '.\n'
         return mini[:-1]
         
     def OnUpdate(self,info):
