@@ -1,6 +1,7 @@
 import VRScript
 import level
 import math
+import random
 # ------------------------ Player ------------------------ #
 
 healthWarn_1 = VRScript.Core.Audible('healthWarn_1', 'Sound Effects/warning/fvox/health_dropping.wav')
@@ -82,23 +83,21 @@ class Player():
 Ouch = VRScript.Core.Audible('Ouch', 'Sound Effects/Pain Voices/voices/ba_pain08.wav')
 Hurt = VRScript.Core.Audible('Hurt', 'Sound Effects/antlion/pain2.wav')
 Hit = VRScript.Core.Audible('Hit', 'Sound Effects/antlion/shell_strike4.wav')
-Die = VRScript.Core.Audible('Die', 'Sound Effects/antlion/land1.wav')
-##Antlion_Idle = VRScript.Core.Audible('Ant_idle', 'Sound Effects/antlion/idle2.wav')
-##loop = Antlion_Idle.getAudioProperties()
-##loop.loop = True
-##Antlion_Idle.setAudioProperties(loop)
+Die = VRScript.Core.Audible('Die', 'Sound Effects/antlion/digdown.wav')
+Idle = VRScript.Core.Audible('Ant_idle', 'Sound Effects/antlion/idle2.wav')
 Antlion_Angry = VRScript.Core.Audible('Ant_Angry', 'Sound Effects/antlion_guard/angry3.wav')
 Antlion_Attack = VRScript.Core.Audible('Ant_Attack', 'Sound Effects/antlion/attack_single1.wav')
 
 class Enemy():
-        Z_OFFSET = .5
+        Z_OFFSET = .8
         pos = [0,0]
         dest = [0,0]
         DELAY = 20
         timer = 0
-        MAX_HP = 3
+        MAX_HP = 5
         hp = 0
         moving = False
+        dying = False
 
         def __init__(self, enum):
                 self.enum = enum
@@ -118,7 +117,7 @@ class Enemy():
                 self.eent.renderable('').show()
                 self.eent.attach(VRScript.Core.Animable(self.eent.getName(), self.eent.mesh))
 
-                self.state = 0  # State of the enemy: 0 for idle, 1 for alert, 2 for attack, 3 for under attack, 4 for dying
+                self.state = 0
                 self.type = "enemy"
 
                 
@@ -128,6 +127,18 @@ class Enemy():
         def OnUpdate(self, info, player, user, facing):
             #progress delay, update position
             self.timer += 1
+            if self.dying and self.timer < self.DELAY:
+                imat = VRScript.Math.Matrix()
+                z = self.Z_OFFSET  - (self.timer/self.DELAY)
+                imat.preTranslation(VRScript.Math.Vector(self.pos[0], self.pos[1], z))
+                self.eent.movable().setPose(imat)
+                return
+            elif self.dying :
+                self.level.mobAlive = False
+                self.eent.renderable('').hide()
+                self.dying = False
+                return
+
             if self.timer < self.DELAY : 
                 if self.moving:
                     imat = VRScript.Math.Matrix()
@@ -222,20 +233,17 @@ class Enemy():
                 self.state = 0
                 
             if self.hp <= 0:
-                self.level.mobAlive = False
-                self.eent.renderable('').hide()
                 Die.play()
+                self.dying = True
+
             else: 
                 self.applyState()
                 
 
         def applyState(self):
             if(self.state == 0):
-                Antlion_Idle = VRScript.Core.Audible(self.eent.getName()+'Ant_idle', 'Sound Effects/antlion/idle2.wav')
-                loop = Antlion_Idle.getAudioProperties()
-                loop.loop = True
-                self.eent.attach(Antlion_Idle)
-                self.eent.audible(self.eent.getName()+'Ant_idle').play()
+                if random.random() < .25 :
+                    Idle.play()
             elif(self.state == 1):
                 Antlion_Angry.play()
             elif(self.state == 2):

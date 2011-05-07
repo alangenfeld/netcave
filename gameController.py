@@ -161,7 +161,8 @@ class gameController(VRScript.Core.Behavior):
                 self.left()
 
                 
-            self.minimap.setText( self.getMiniMap(11))
+            self.minimap.setText( self.getMiniMap(4))
+            print(self.getMiniMap(4))
             print(USER.movable().getPose().getTranslation().x,USER.movable().getPose().getTranslation().y)
 
     def getMiniMap(self, size):

@@ -119,8 +119,8 @@ class floor():
             
             #generate mob classes
             self.mob = EnemyPlayer.Enemy(str(self.depth)+"_"+str(self.enum))
-            print(spawnPLocs[0][0]*3, spawnPLocs[0][1]*3+6)
-            self.mob.spawnLoc("AntLion", "BugMove.fbx", spawnPLocs[0][0], spawnPLocs[0][1], .02, self)
+            r = int(random.random()*len(spawnPLocs))
+            self.mob.spawnLoc("AntLion", "BugMove.fbx", spawnPLocs[r][0], spawnPLocs[r][1], .04, self)
             self.mobAlive = True
             self.enum += 1
 
