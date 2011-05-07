@@ -129,7 +129,7 @@ class gameController(VRScript.Core.Behavior):
         #print(repr(USER.movable().getPose().x.w)+","+repr(USER.movable().getPose().y.w))
         movedir = -1
         facedir = self.getFacing()
-        self.devButton()
+        self.devButton(not joystick)
         if not joystick:
             if button[0] and button[2]:
                 movedir = 0
@@ -243,30 +243,6 @@ class gameController(VRScript.Core.Behavior):
         if self.timer == 0:
             self.moveUser()
         
-        controller = VRScript.Util.getControllerState();
-        btnInfo = controller["button"];
-        if (btnInfo[0] and self.timer==0 and self.waitTorch==0):
-            pos = self.USERPOS
-            face = self.getFacing()
-            x = pos[0] * 3
-            y = pos[1] * 3
-            if face is 0 : # forward
-                if self.level.getCurrentFloor().isPassable(pos[0],pos[1]+1): return
-                y += 3.0/2
-            elif face is 3 : # left
-                if self.level.getCurrentFloor().isPassable(pos[0]-1,pos[1]): return
-                x -= 3.0/2
-            elif face is 1 : # right
-                if self.level.getCurrentFloor().isPassable(pos[0]+1,pos[1]): return
-                x += 3.0/2
-            else : # back
-                if self.level.getCurrentFloor().isPassable(pos[0],pos[1]-1): return
-                y -= 3.0/2
-
-            self.setTorch(self.currentTorch, x, y, 3.0/2)
-            self.currentTorch = (self.currentTorch + 1) % 4
-            self.waitTorch = 5    
-        
         pos = self.USER.movable().getPose().getTranslation()
         
         for x in range(len(self.torches)):
@@ -283,26 +259,30 @@ class gameController(VRScript.Core.Behavior):
         print(str(btnInfo.button))
      
             
-    def devButton(self):
-        button =  VRScript.Util.getControllerState(0)['button']
-        if (button[0] and button[1] and self.waitTorch==0):
-            print('placing '+str(self.currentTorch))
+    def devButton(self, dev):
+        controller = VRScript.Util.getControllerState();
+        btnInfo = controller["button"];
+        if ((not dev) and btnInfo[0] and self.timer==0 and self.waitTorch==0) or (dev and btnInfo[0] and btnInfo[1] and self.waitTorch==0):
             pos = self.USERPOS
             face = self.getFacing()
             x = pos[0] * 3
             y = pos[1] * 3
             if face is 0 : # forward
                 if self.level.getCurrentFloor().isPassable(pos[0],pos[1]+1): return
-                #y += 3.0/2
+                y += 3.0/3
             elif face is 3 : # left
                 if self.level.getCurrentFloor().isPassable(pos[0]-1,pos[1]): return
-                #x -= 3.0/2
+                x -= 3.0/3
             elif face is 1 : # right
                 if self.level.getCurrentFloor().isPassable(pos[0]+1,pos[1]): return
-                #x += 3.0/2
+                x += 3.0/3
             else : # back
                 if self.level.getCurrentFloor().isPassable(pos[0],pos[1]-1): return
-                #y -= 3.0/2
+                y -= 3.0/3
+
+            self.setTorch(self.currentTorch, x, y, 3.0/2)
+            self.currentTorch = (self.currentTorch + 1) % 4
+            self.waitTorch = 5    
 
             self.setTorch(self.currentTorch, x, y, 3.0/2)
             self.currentTorch = (self.currentTorch + 1) % 4
